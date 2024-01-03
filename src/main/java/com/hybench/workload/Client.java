@@ -43,7 +43,7 @@ public abstract class Client {
     static long iqTotalCount = 0L;
     static long apTotalTime = 0L;
     Lock lock = new ReentrantLock();
-    protected int taskType = 0; // 0 : xp ,1: tp,2 : ap , 3:xp ,4: htap
+    protected int taskType = 0; // 0 : xp,   1: tp,  2 : appower, 3:htap,  4: fresh, 6: all, 7: ap
     ConfigReader CR = null;
     Result ret = null;
     Histogram hist = null;

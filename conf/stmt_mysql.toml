@@ -276,6 +276,12 @@ sql = [
 "UPDATE SAVINGACCOUNT SET BALANCE = BALANCE + ? WHERE ACCOUNTID = ?"
 ]
 
+[AT-00]
+sql= [
+    "select custID from customer where companyID = ? order by created_date ASC limit 10",
+    "delete from savingAccount where accountID = ?"
+]
+
 [AT-0]
 sql= [
     "select custID from customer where companyID = ? order by created_date limit 10",
@@ -284,8 +290,8 @@ sql= [
 
 [AT-1]
 sql = [
-"SELECT isblocked,balance FROM savingAccount WHERE accountID = ?",
-"select count(*) from transfer t, savingaccount s where t.sourceid=? and s.isblocked=1  and t.targetid = s.accountid;",
+"SELECT  /*+ query_timeout(20000000) */ isblocked,balance FROM savingAccount WHERE accountID = ?",
+"select  /*+ query_timeout(20000000) */ count(*) from transfer t, savingaccount s where t.sourceid=? and s.isblocked=1  and t.targetid = s.accountid;",
 "UPDATE savingAccount SET balance = balance - ? where accountID = ?",
 "UPDATE savingAccount SET balance = balance + ? where accountID = ?",
 "INSERT INTO transfer(id,sourceID,targetID,amount,type,transfer_ts) VALUES (0, ?,?,?,?,?)"
@@ -293,8 +299,8 @@ sql = [
 
 [AT-2]
 sql = [
-"SELECT isblocked,balance FROM checkingAccount WHERE accountID = ?",
-"select count(*) from checking ch, checkingAccount ca where ch.sourceid=? and ca.isblocked=1 and ch.targetid=ca.accountid;",
+"SELECT  /*+ query_timeout(20000000) */ isblocked,balance FROM checkingAccount WHERE accountID = ?",
+"select  /*+ query_timeout(20000000) */ count(*) from checking ch, checkingAccount ca where ch.sourceid=? and ca.isblocked=1 and ch.targetid=ca.accountid;",
 "UPDATE checkingAccount SET balance = balance - ? where accountID = ?",
 "UPDATE checkingAccount SET balance = balance + ? where accountID = ?",
 "INSERT INTO checking VALUES (0, ?,?,?,?,?)"
@@ -302,7 +308,7 @@ sql = [
 
 [AT-3]
 sql = [
-"SELECT isblocked FROM SavingAccount WHERE accountID = ?",
+"SELECT  /*+ query_timeout(20000000) */ isblocked FROM SavingAccount WHERE accountID = ?",
 """Select (inbound.t_amount-outbound.t_amount) as t_amount  from
 (select sa.accountid as sid, sum(t.amount) as t_amount from savingaccount sa, transfer t
 where sa.accountid=? and sa.accountid=t.sourceid
@@ -325,13 +331,13 @@ and t1.status='under_review'  ORDER BY t1.id LIMIT 1;
 
 [AT-4]
 sql = [
-"select count(distinct sa2.accountid) from transfer t, savingAccount sa1, savingAccount sa2, loantrans lt where sa1.accountid = ? and sa1.accountid = t.targetid and t.sourceid = sa2.accountid and lt.applicantid=sa2.accountid and lt.status='accept';",
+"select  /*+ query_timeout(20000000) */ count(distinct sa2.accountid) from transfer t, savingAccount sa1, savingAccount sa2, loantrans lt where sa1.accountid = ? and sa1.accountid = t.targetid and t.sourceid = sa2.accountid and lt.applicantid=sa2.accountid and lt.status='accept';",
 "UPDATE savingAccount SET balance = balance + ? where accountID = ?;",
 "UPDATE LoanTrans SET status = 'lent', contract_timestamp=? where id = ?;"
 ]
 
 [AT-4.1]
-sql = """SELECT t1.applicantid, t1.amount,t1.id, t1.loantrans_ts
+sql = """SELECT  /*+ query_timeout(20000000) */ t1.applicantid, t1.amount,t1.id, t1.loantrans_ts
 FROM loantrans t1
 where t1.id >= (SELECT ROUND(RAND()*(SELECT MAX(id) FROM loantrans where status='accept')) AS id)
 and t1.status='accept'  ORDER BY t1.id LIMIT 1;
