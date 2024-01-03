@@ -52,6 +52,7 @@ public abstract class Client {
     static int testid1=1;
     static int testid2=300001;
     static int testid3=300001;
+    int tenant_num=0;
     List<Integer> Related_Blocked_Transfer_ids=null;
     List<Integer> Related_Blocked_Checking_ids=null;
     static HashMap<Integer, Long> delete_map1 = new HashMap<Integer, Long>();
@@ -62,6 +63,10 @@ public abstract class Client {
     static ArrayBlockingQueue<Integer> queue_ids= null;
 
     ExecutorService es = null;//Executors.newFixedThreadPool(5);
+
+    public void setTenant_num(int tenant_num){
+        this.tenant_num = tenant_num;
+    }
 
     public void setTestid1(int random_num){
         this.testid1 = random_num;
@@ -188,6 +193,10 @@ public abstract class Client {
         else if(taskType == 1){
             threads = intParameter("tpclient");
         }
+        else if(taskType == 8){
+            threads = intParameter("tpclient_"+tenant_num);
+        }
+
         CR = new ConfigReader(strParameter("sf","1x"));
         String db = strParameter("db");
         setDbType(getDbType(db));
@@ -201,6 +210,7 @@ public abstract class Client {
             else if(taskType == 2) {
                 threads = 1;
             }
+
             else{
                 threads = 0;
             }
@@ -276,6 +286,30 @@ public abstract class Client {
         }
         return client;
     }
+
+    public static Client initTask(Properties cfg,String name,int taskType, int tenant_num) {
+        Client client = null;
+        try {
+            client = (Client) Class.forName("com.hybench.workload." + name).getDeclaredConstructor().newInstance();
+            client.setClientName(name+tenant_num);
+            client.setTask_prop(cfg);
+            client.setTaskType(taskType);
+            client.setTenant_num(tenant_num);
+            client.doInit_wrapper(name);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return client;
+    }
+
     // client work from here. A new thread named timer to output response time histogram every 1/10 duration
     public void startTask() {
         int testTime = 0;
@@ -294,7 +328,14 @@ public abstract class Client {
                 ret.setApclient(threads);
         }
 
-        if(clientName.equalsIgnoreCase("tpclient")){
+        if(clientName.equalsIgnoreCase("TPClient")){
+            if(taskType == 0 || taskType == 4)
+                ret.setXtpclient(threads);
+            else
+                ret.setTpclient(threads);
+        }
+
+        if(clientName.equalsIgnoreCase("CloudTPClient"+tenant_num)){
             if(taskType == 0 || taskType == 4)
                 ret.setXtpclient(threads);
             else
@@ -312,7 +353,7 @@ public abstract class Client {
         if (taskType == 7){
             testTime = intParameter("apRunMins");
         }
-        else if (taskType == 1){
+        else if (taskType == 1 || taskType == 8){
             testTime = intParameter("tpRunMins");
         }
         else if(taskType == 0 || taskType == 4){
@@ -460,6 +501,7 @@ public abstract class Client {
         }
         logger.info( "Finished to execute " + clientName );
     }
+
     public abstract void doInit();
 
     public abstract ClientResult execute();

@@ -102,5 +102,45 @@ public class ConnectionMgr {
         return conn;
     }
 
+    // True refers to multi-tenancy mode
+    public static Connection getConnection(int tenant_number, boolean True){
+        Connection conn = null;
+        Properties prop = new Properties();
+        try {
+            FileInputStream fis = new FileInputStream(ConfigLoader.confFile);
+            prop.load(fis);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            logger.error("Read configure failed : " + ConfigLoader.confFile,e  );
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            logger.error("Read configure failed : " + ConfigLoader.confFile,e);
+            e.printStackTrace();
+        }
+        String url = prop.getProperty("url");
+        String username = prop.getProperty("username");
+        String password = prop.getProperty("password");
+        try {
+            Class.forName(prop.getProperty("classname"));
+            url = prop.getProperty("url_"+tenant_number);
+            username = prop.getProperty("username_"+tenant_number);
+            password = prop.getProperty("password");
+            conn = DriverManager.getConnection(
+                    url,
+                    username,
+                    password);
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            logger.error( "Getting connection failed! " + url +" : " + username +" : " + password );
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return conn;
+    }
 
 }

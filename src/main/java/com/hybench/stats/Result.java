@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class Result {
     public static Logger logger = LogManager.getLogger(Result.class);
     private String dbType = null;
+    private int tenant_num;
     private long tpTotal;
     private long apTotal;
     private long atTotal;
@@ -36,6 +37,10 @@ public class Result {
     private int xtpclient;
     private String riskRate;
     private int apRound;
+
+    public Result(int tenant_num){
+        this.tenant_num=tenant_num;
+    }
 
 
     public void setApRound(int round) {
@@ -182,7 +187,12 @@ public class Result {
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
                 logger.info("TPS is " + getTps());
                 break;
-            case 2 :
+            case 8:
+//                logger.info("AP Concurrency of tenant is " + getApclient());
+//                logger.info("TP Concurrency of tenant is " + getTpclient());
+//                logger.info("Total amount of TP Transaction is " + getTpTotal());
+//                logger.info("TPS is " + getTps());
+                break;
             case 7 :
                 logger.info("AP Concurrency is " + getApclient());
                 logger.info("TP Concurrency is " + getTpclient());
@@ -241,7 +251,7 @@ public class Result {
             }
         }
 
-        if(type == 1 || type == 6) {
+        if(type == 1 || type == 6|| type == 8) {
             System.out.println("------------TP-------------------");
             for (int tpidx = 0; tpidx < 18; tpidx++) {
                 System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",

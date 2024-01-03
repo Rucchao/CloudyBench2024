@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 
-public class TPClient extends Client {
+public class CloudTPClient extends Client {
     int at1_percent = 35;
     int at2_percent = 25;
     int at3_percent = 15;
@@ -49,7 +49,7 @@ public class TPClient extends Client {
     int tp17_percent = 12;
     int tp18_percent = 12;
 
- //   RandomGenerator rg = new RandomGenerator();
+    //   RandomGenerator rg = new RandomGenerator();
     int customer_no = 0;
     int company_no = 0;
     int contention_num=0;
@@ -936,7 +936,7 @@ public class TPClient extends Client {
         return cr;
     }
 
-    // 16 Operational Transactions (OT)
+    // 18 Operational Transactions (OT)
     public ClientResult execTxn1(Connection conn) {
 
         ClientResult cr = new ClientResult();
@@ -1693,9 +1693,9 @@ public class TPClient extends Client {
             if(status=="accept") {
                 Date date=null;
                 if(appts.getTime()>CR.endDate.getTime())
-                     date = rg.getRandomTimestamp(CR.endDate.getTime(),appts.getTime());
+                    date = rg.getRandomTimestamp(CR.endDate.getTime(),appts.getTime());
                 else
-                     date = rg.getRandomTimestamp(appts.getTime(), CR.endDate.getTime());
+                    date = rg.getRandomTimestamp(appts.getTime(), CR.endDate.getTime());
                 contract_ts = new Timestamp(date.getTime());
 
                 // Insert into the LOANTRANS
@@ -2205,11 +2205,13 @@ public class TPClient extends Client {
         int type = getTaskType();
         ClientResult ret = new ClientResult();
         ClientResult cr = null;
-        Connection conn = ConnectionMgr.getConnection();
+
+        // get the tenant url
+        Connection conn = ConnectionMgr.getConnection(tenant_num,true);
         long totalElapsedTime = 0L;
         try {
-            Class<TPClient> tpClass = (Class<TPClient>)Class.forName("com.hybench.workload.TPClient");
-            if(type == 1){
+            Class<CloudTPClient> tpClass = (Class<CloudTPClient>)Class.forName("com.hybench.workload.CloudTPClient");
+            if(type == 8){
 
                 while(!exitFlag) {
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
@@ -2301,11 +2303,11 @@ public class TPClient extends Client {
 //                        if(rand < fresh_percent){
 //                            cr= execFresh3(conn);
 //                        }
-                       if(rand < fresh_percent/2){
+                        if(rand < fresh_percent/2){
                             cr= execFresh2(conn);
                         }
                         else if(rand < fresh_percent){
-                           cr= execFresh(conn);
+                            cr= execFresh(conn);
                         }
                         else
                             continue;

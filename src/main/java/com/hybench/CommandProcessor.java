@@ -50,6 +50,14 @@ public class CommandProcessor {
                 .build();
         options.addOption(sqlFile);
 
+        Option tenant_num = Option.builder("m")
+                .longOpt("tenant_num")
+                .desc("The tenant number to test")
+                .hasArg()
+                .argName("tenant number")
+                .build();
+        options.addOption(tenant_num);
+
         Option verbose = Option.builder("s")
                 .longOpt("silent")
                 .desc("Don't print detail test response time histogram")
@@ -93,6 +101,10 @@ public class CommandProcessor {
             argsList.put("f",cmdLine.getOptionValue("f"));
         }
 
+        if(cmdLine.hasOption("m")){
+            argsList.put("m",cmdLine.getOptionValue("m"));
+        }
+
         if(cmdLine.hasOption("s")){
             argsList.put("s","true");
         }
@@ -117,7 +129,9 @@ public class CommandProcessor {
         System.out.println("  hybench -t runfresh -c conf/db.properties -f sql/sql_file.sql");
         System.out.println("Step 7: run htap workload");
         System.out.println("  hybench -t runhtap -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 8: run all workload");
+        System.out.println("Step 8: run cloud workload");
+        System.out.println("  hybench -t runcloud -c conf/db.properties -f sql/sql_file.sql");
+        System.out.println("Step 9: run all workload");
         System.out.println("  hybench -t runall -c conf/db.properties -f sql/sql_file.sql");
     }
 }
