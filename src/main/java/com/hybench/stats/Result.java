@@ -19,6 +19,8 @@ public class Result {
     private int tenant_num;
     private int[] tpTotalList;
     private double[] tpsList;
+    private int[] apTotalList;
+    private double[] apsList;
     private long tpTotal;
     private long apTotal;
     private long atTotal;
@@ -112,6 +114,14 @@ public class Result {
         this.tpsList = TpsList;
     }
 
+    public void setapTotalList(int[] apTotalList) {
+        this.apTotalList = apTotalList;
+    }
+
+    public void setapsList(double[] apsList) {
+        this.apsList = apsList;
+    }
+
     public int getApclient() {
         return apclient;
     }
@@ -199,13 +209,6 @@ public class Result {
                 logger.info("TP Concurrency is " + getTpclient());
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
                 logger.info("TPS is " + getTps());
-                break;
-            case 8:
-                logger.info("The Cloud Testing is Done.");
-//                logger.info("AP Concurrency of tenant is " + getApclient());
-//                logger.info("TP Concurrency of tenant is " + getTpclient());
-//                logger.info("Total amount of TP Transaction is " + getTpTotal());
-//                logger.info("TPS is " + getTps());
                 break;
             case 7 :
                 logger.info("AP Concurrency is " + getApclient());
@@ -341,6 +344,12 @@ public class Result {
         if(type==8){
             for (int i = 0; i < tenant_num; i++) {
                 logger.info("Tenant"+(i+1)+" : final tps is " + tpsList[i]);
+            }
+        }
+
+        if(type==9){
+            for (int i = 0; i < tenant_num; i++) {
+                logger.info("Tenant"+(i+1)+" : final aps is " + apsList[i]);
             }
         }
 

@@ -318,7 +318,7 @@ public class CloudAPClient extends Client{
             responseTime = currentEndTs - currentStarttTs;
             hist.getAPItem(0).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -370,7 +370,7 @@ public class CloudAPClient extends Client{
             hist.getAPItem(1).addValue(responseTime);
             logger.debug(pstmt.toString());
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -405,7 +405,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(2).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -440,7 +440,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(3).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -475,7 +475,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(4).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -506,7 +506,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(5).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -545,7 +545,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(6).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -576,7 +576,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(7).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -607,7 +607,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(8).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -638,7 +638,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(9).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -669,7 +669,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(10).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -702,7 +702,7 @@ public class CloudAPClient extends Client{
             responseTime = currentEndTs - currentStarttTs;
             hist.getAPItem(11).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -736,7 +736,7 @@ public class CloudAPClient extends Client{
             logger.debug(pstmt.toString());
             hist.getAPItem(12).addValue(responseTime);
             lock.lock();
-            apTotalCount++;
+            apTotalList[tenant_num-1]++;
             lock.unlock();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -757,34 +757,21 @@ public class CloudAPClient extends Client{
     @Override
     public ClientResult execute() {
         int type = getTaskType();
-        Connection conn = ConnectionMgr.getConnection(1);
+        // get the tenant url
+        logger.info("Current AP Client Tenant Number is "+tenant_num);
+
+        Connection conn = ConnectionMgr.getConnection(tenant_num,true);
+
         ClientResult ret = new ClientResult();
         long totalElapsedTime = 0L;
         try {
-            Class<APClient> apClass = (Class<APClient>)Class.forName("com.hybench.workload.APClient");
-            if(type == 2){
-                for(int r = 1;r <= round ;r++) {
-                    long roundElapsedTime = 0L;
-                    for (int i = 1; i <= 13; i++) {
-                        Method method = apClass.getMethod("execQ" + i, Connection.class);
-                        ClientResult cr = (ClientResult) method.invoke(this, conn);
-                        logger.info("AP Task Q" + i + " elapsed time is  " + String.format("%.2f", cr.getRt()) + "(ms)");
-                        totalElapsedTime += cr.getRt();
-                        roundElapsedTime += cr.getRt();
-                        apTotalTime += cr.getRt();
-                    }
-                    logger.info( r + " round elapsed time is " + String.format("%d",roundElapsedTime) + "(ms) ,QPS is " + String.format("%.2f",12000.0/roundElapsedTime));
-                }
-                ret.setRt(totalElapsedTime);
-                ret.setApRound(round);
-                logger.info("total elapsed time is  " + String.format("%.2f",ret.getRt()) + "(ms)");
-            }
-            else if(type == 7){
+            Class<CloudAPClient> apClass = (Class<CloudAPClient>)Class.forName("com.hybench.workload.CloudAPClient");
+            if(type == 9){
                 int round = 1;
                 while(!exitFlag){
                     long roundElapsedTime = 0L;
                     ArrayList<Integer> runList = getRandomList(1,13);
-                    StringBuilder sb = new StringBuilder("Current thread " + Thread.currentThread().getName() + " - Run List in current round "+ round+" : ");
+                    StringBuilder sb = new StringBuilder("Tenant"+tenant_num+" : Current thread " + Thread.currentThread().getName() + " - Run List in current round "+ round+" : ");
                     for(int idx:runList){
                         sb.append("Q").append(idx).append(" ");
                     }
@@ -799,8 +786,8 @@ public class CloudAPClient extends Client{
                     if (exitFlag) {
                         break;
                     }
-                    logger.info("Current thread " + Thread.currentThread().getName() + " - round " + round + " elapsed time is " + String.format("%d",roundElapsedTime) + "(ms)");
-                    logger.info("Current thread " + Thread.currentThread().getName() + " - round " + round + " is done");
+                    logger.info("Tenant "+tenant_num+" : APClient Current thread " + Thread.currentThread().getName() + " - round " + round + " elapsed time is " + String.format("%d",roundElapsedTime) + "(ms)");
+                    //logger.info("Tenant "+tenant_num+" : APClient Current thread " + Thread.currentThread().getName() + " - round " + round + " is done");
                     round++;
                 }
                 ret.setApRound(round);

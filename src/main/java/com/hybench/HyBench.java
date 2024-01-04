@@ -351,6 +351,59 @@ public class HyBench {
         logger.info("Cloud TP Workload is done.");
     }
 
+    public void runCloudAP(int tenant_num){
+        logger.info("Begin Cloud AP Workload");
+        taskType = 9;
+        List<Client> tasks = new ArrayList<Client>();
+        res.setStartTS(dateFormat.format(new Date()));
+        res.setTenant_num(tenant_num);
+        for (int i = 1; i <=tenant_num ; i++) {
+            String apClient = ConfigLoader.prop.getProperty("apclient_"+i);
+            if(Integer.parseInt(apClient) > 0){
+                Client job = Client.initTask(ConfigLoader.prop,"CloudAPClient",taskType, i);
+                //Result res_tenant = new Result(i);
+                job.setRet(res);
+                job.setVerbose(verbose);
+                job.setSqls(sqls);
+                tasks.add(job);
+            }
+            else {
+                logger.warn("There is no an available tp client");
+                return;
+            }
+        }
+        ExecutorService es = Executors.newFixedThreadPool(tasks.size());
+        List<Future> future = new ArrayList<Future>();
+        for (final Client j : tasks) {
+            future.add( es.submit(new Runnable() {
+                        public void run() {
+                            j.startTask();
+                        }
+                    })
+            );
+        }
+        for(int flength=0;flength < future.size();flength++) {
+            Future f = future.get(flength);
+            if (f != null && !f.isCancelled() && !f.isDone()) {
+                try {
+                    f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (!es.isShutdown() || !es.isTerminated()) {
+            es.shutdownNow();
+        }
+        res.setEndTs(dateFormat.format(new Date()));
+
+
+        logger.info("Cloud AP Workload is done.");
+    }
+
     public static void main(String[] args) throws SQLException {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         File file = new File("conf/log4j2.properties");
@@ -441,6 +494,10 @@ public class HyBench {
                 else if(cmd.equalsIgnoreCase("runCloudTP")){
                     type=8;
                     hybench.runCloudTP(hybench.tenant_num);
+                }
+                else if(cmd.equalsIgnoreCase("runCloudAP")){
+                    type=9;
+                    hybench.runCloudAP(hybench.tenant_num);
                 }
                 else{
                     logger.error("Run task not found : " + cmd);

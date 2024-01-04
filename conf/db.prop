@@ -22,7 +22,7 @@ tpclient_1=1
 
 url_2=jdbc:oceanbase://localhost:2881/hybench_sf1x?useUnicode=true&characterEncoding=utf-8
 username_2=root@tenant2
-apclient_2=1
+apclient_2=2
 tpclient_2=1
 
 ## support 1x, 10x,100x,1000x

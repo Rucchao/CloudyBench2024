@@ -129,9 +129,11 @@ public class CommandProcessor {
         System.out.println("  hybench -t runfresh -c conf/db.properties -f sql/sql_file.sql");
         System.out.println("Step 7: run htap workload");
         System.out.println("  hybench -t runhtap -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 8: run cloud workload");
-        System.out.println("  hybench -t runcloud -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 9: run all workload");
+        System.out.println("Step 8: run cloud TP workload");
+        System.out.println("  hybench -t runCloudTP -c conf/db.properties -f sql/sql_file.sql -m tenant_num");
+        System.out.println("Step 9: run cloud AP workload");
+        System.out.println("  hybench -t runCloudAP -c conf/db.properties -f sql/sql_file.sql -m tenant_num");
+        System.out.println("Step 10: run all workload");
         System.out.println("  hybench -t runall -c conf/db.properties -f sql/sql_file.sql");
     }
 }

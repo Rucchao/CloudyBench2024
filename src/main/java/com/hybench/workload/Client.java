@@ -44,6 +44,8 @@ public abstract class Client {
     static long apTotalTime = 0L;
     static int[] tpTotalList;
     static double[] tpsList;
+    static int[] apTotalList;
+    static double[] apsList;
     Lock lock = new ReentrantLock();
     protected int taskType = 0; // 0 : xp,   1: tp,  2 : appower, 3:htap,  4: fresh, 6: all, 7: ap
     ConfigReader CR = null;
@@ -195,10 +197,17 @@ public abstract class Client {
         else if(taskType == 1){
             threads = intParameter("tpclient");
         }
+
         else if(taskType == 8){
             threads = intParameter("tpclient_"+tenant_num);
             tpTotalList=new int[tenant_num];
             tpsList=new double[tenant_num];
+        }
+
+        else if(taskType == 9){
+            threads = intParameter("apclient_"+tenant_num);
+            apTotalList=new int[tenant_num];
+            apsList=new double[tenant_num];
         }
 
         CR = new ConfigReader(strParameter("sf","1x"));
@@ -346,13 +355,17 @@ public abstract class Client {
                 ret.setTpclient(threads);
         }
 
+        if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)){
+                ret.setApclient(threads);
+        }
+
 	    ret.setRiskRate(String.valueOf(risk_rate));
 
         final int _fresh_interval = intParameter("fresh_interval",20);
 
         round = intParameter("apround",1);
 
-        if (taskType == 7){
+        if (taskType == 7|| taskType == 9){
             testTime = intParameter("apRunMins");
         }
         else if (taskType == 1 || taskType == 8){
@@ -426,7 +439,15 @@ public abstract class Client {
                                     if(taskType == 8) {
                                         logger.info("Client"+tenant_num+" : Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalList[tenant_num-1] / (elpased_time / 1000.0)));
                                     }
-
+                                }
+                                if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)) {
+                                    for(int apidx = 0;apidx < 13;apidx++) {
+                                        if(hist.getAPItem(apidx).getN() == 0)
+                                            continue;
+                                    }
+                                    if(taskType == 9) {
+                                        logger.info("Client"+tenant_num+" : Current " + (i + 1) + "/10 time AP QPS is " + String.format("%.2f", apTotalList[tenant_num-1] / (elpased_time / 1000.0)));
+                                    }
                                 }
                             }
 
@@ -519,6 +540,17 @@ public abstract class Client {
 
                 tpsList[tenant_num-1]=Double.valueOf(String.format("%.2f", tpTotalList[tenant_num-1] / (testDuration * 60.0)));
                 ret.setTpsList(tpsList);
+                //ret.setTps(Double.valueOf(String.format("%.2f", tpTotalList[tenant_num-1] / (testDuration * 60.0))));
+            }
+        }
+
+        if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)) {
+
+            if (taskType == 9) {
+                ret.setapTotalList(apTotalList);
+
+                apsList[tenant_num-1]=Double.valueOf(String.format("%.2f", apTotalList[tenant_num-1] / (testDuration * 60.0)));
+                ret.setapsList(apsList);
                 //ret.setTps(Double.valueOf(String.format("%.2f", tpTotalList[tenant_num-1] / (testDuration * 60.0))));
             }
         }
