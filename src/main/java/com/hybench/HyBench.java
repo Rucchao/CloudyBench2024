@@ -303,12 +303,13 @@ public class HyBench {
         taskType = 8;
         List<Client> tasks = new ArrayList<Client>();
         res.setStartTS(dateFormat.format(new Date()));
+        res.setTenant_num(tenant_num);
         for (int i = 1; i <=tenant_num ; i++) {
             String tpClient = ConfigLoader.prop.getProperty("tpclient_"+i);
             if(Integer.parseInt(tpClient) > 0){
                 Client job = Client.initTask(ConfigLoader.prop,"CloudTPClient",taskType, i);
-                Result res_tenant = new Result(i);
-                job.setRet(res_tenant);
+                //Result res_tenant = new Result(i);
+                job.setRet(res);
                 job.setVerbose(verbose);
                 job.setSqls(sqls);
                 tasks.add(job);

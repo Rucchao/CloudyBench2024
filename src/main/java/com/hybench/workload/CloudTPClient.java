@@ -958,7 +958,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(0).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1000,7 +1000,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(1).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1039,7 +1039,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(2).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1078,7 +1078,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(3).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1117,7 +1117,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(4).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1155,7 +1155,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(5).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1194,7 +1194,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(6).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1232,7 +1232,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(7).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1328,7 +1328,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(8).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1406,7 +1406,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(9).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1504,7 +1504,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(10).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1616,7 +1616,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(11).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1732,7 +1732,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(12).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1812,7 +1812,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(13).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1881,7 +1881,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(14).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -1972,7 +1972,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(15).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -2077,7 +2077,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(16).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -2179,7 +2179,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(17).addValue(responseTime);
             lock.lock();
-            tpTotalCount++;
+            tpTotalList[tenant_num-1]++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -2207,6 +2207,8 @@ public class CloudTPClient extends Client {
         ClientResult cr = null;
 
         // get the tenant url
+        logger.info("Current client tenant number is "+tenant_num);
+
         Connection conn = ConnectionMgr.getConnection(tenant_num,true);
         long totalElapsedTime = 0L;
         try {

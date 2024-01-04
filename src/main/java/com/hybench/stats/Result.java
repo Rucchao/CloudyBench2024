@@ -17,6 +17,8 @@ public class Result {
     public static Logger logger = LogManager.getLogger(Result.class);
     private String dbType = null;
     private int tenant_num;
+    private int[] tpTotalList;
+    private double[] tpsList;
     private long tpTotal;
     private long apTotal;
     private long atTotal;
@@ -42,6 +44,9 @@ public class Result {
         this.tenant_num=tenant_num;
     }
 
+    public void setTenant_num(int num) {
+        this.tenant_num = num;
+    }
 
     public void setApRound(int round) {
         this.apRound = round;
@@ -97,6 +102,14 @@ public class Result {
 
     public void setTpTotal(long tpTotal) {
         this.tpTotal = tpTotal;
+    }
+
+    public void setTpTotalList(int[] TpTotalList) {
+        this.tpTotalList = TpTotalList;
+    }
+
+    public void setTpsList(double[] TpsList) {
+        this.tpsList = TpsList;
     }
 
     public int getApclient() {
@@ -188,6 +201,7 @@ public class Result {
                 logger.info("TPS is " + getTps());
                 break;
             case 8:
+                logger.info("The Cloud Testing is Done.");
 //                logger.info("AP Concurrency of tenant is " + getApclient());
 //                logger.info("TP Concurrency of tenant is " + getTpclient());
 //                logger.info("Total amount of TP Transaction is " + getTpTotal());
@@ -251,7 +265,7 @@ public class Result {
             }
         }
 
-        if(type == 1 || type == 6|| type == 8) {
+        if(type == 1 || type == 6) {
             System.out.println("------------TP-------------------");
             for (int tpidx = 0; tpidx < 18; tpidx++) {
                 System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
@@ -322,6 +336,12 @@ public class Result {
         if(type == 4){
             logger.info("-----------Avg-Freshness-Score--------------------");
             logger.info("Freshness(ms) : "+ getFresh() * 1.0);
+        }
+
+        if(type==8){
+            for (int i = 0; i < tenant_num; i++) {
+                logger.info("Tenant"+(i+1)+" : final tps is " + tpsList[i]);
+            }
         }
 
         logger.info("====================Thank you!========================");
