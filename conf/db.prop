@@ -13,7 +13,7 @@ username_ap=root@tenant2
 password_ap=
 
 ## support cloud database benchmarking for multi-tenancy
-
+testTime=1
 tenant_num=2
 url_1=jdbc:oceanbase://localhost:2881/hybench_sf1x?useUnicode=true&characterEncoding=utf-8
 username_1=root@tenant1
@@ -23,10 +23,10 @@ tpclient_1=1
 url_2=jdbc:oceanbase://localhost:2881/hybench_sf1x?useUnicode=true&characterEncoding=utf-8
 username_2=root@tenant2
 apclient_2=2
-tpclient_2=1
+tpclient_2=2
 
 ## support 1x, 10x,100x,1000x
-sf=1x
+sf=1
 
 at1_percent=35
 at2_percent=25

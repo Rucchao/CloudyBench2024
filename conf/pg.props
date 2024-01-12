@@ -10,17 +10,30 @@ password=postgres
 username_ap=postgres
 password_ap=postgres
 
-url=jdbc:postgresql://localhost:5432/hybench_sf1x
-url_tp=jdbc:postgresql://localhost:5432/hybench_sf1x
-url_ap=jdbc:postgresql://localhost:5432/hybench_sf1x
+url=jdbc:postgresql://localhost:5432/cloudybench_sf1
+url_tp=jdbc:postgresql://localhost:5432/cloudybench_sf1
+url_ap=jdbc:postgresql://localhost:5432/cloudybench_sf1
 
 
-at1_percent=35
-at2_percent=25
-at3_percent=15
-at4_percent=15
-at5_percent=7
-at6_percent=3
+## support cloud database benchmarking for multi-tenancy
+tenant_num=2
+
+url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1
+username_1=postgres
+password_1=postgres
+apclient_1=1
+tpclient_1=1
+
+url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1
+username_2=postgres
+password_2=postgres
+apclient_2=1
+tpclient_2=1
+
+testTime=3
+t1_percent=15
+t2_percent=5
+t3_percent=80
 
 tpclient=1
 apclient=1

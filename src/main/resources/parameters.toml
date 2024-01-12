@@ -1,3 +1,19 @@
+[cloudybench]
+sales_customer_number = 30000
+sales_order_number = 30000
+sales_product_number = 100000
+sales_customer_datapath = "sales_customer.csv"
+sales_order_datapath = "sales_order.csv"
+sales_orderline_datapath = "sales_orderline.csv"
+customer_age_lower = 18
+customer_age_upper = 60
+startYear = 2014
+midPoint = 2019
+endYear = 2024
+startDate = "2014-01-01"
+midPointDate="2019-01-01"
+endDate = "2023-12-31"
+
 [1x]
 startYear = 2014
 midPoint = 2019
