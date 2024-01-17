@@ -8,7 +8,6 @@ package com.cloudybench.workload;
  *   abstract class Client
  **/
 
-
 import com.cloudybench.Constant;
 import com.cloudybench.load.ConfigReader;
 import com.cloudybench.stats.Histogram;
@@ -433,6 +432,7 @@ public abstract class Client {
 //                                                + " | 99% rt : " + String.format("%.2f",hist.getTPItem(tpidx).getPercentile(99)));
                                     }
                                     if(taskType == 8) {
+                                        logger.info("This is tenant "+tenant_num);
                                         logger.info("Client"+tenant_num+" : Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalList[tenant_num-1] / (elpased_time / 1000.0)));
                                     }
                                 }

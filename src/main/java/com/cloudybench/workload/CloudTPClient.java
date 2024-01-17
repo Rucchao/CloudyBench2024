@@ -218,6 +218,7 @@ public class CloudTPClient extends Client {
 
         // get the tenant url
         Connection conn = ConnectionMgr.getConnection(tenant_num,true);
+        logger.info("This is tenant "+tenant_num);
         long totalElapsedTime = 0L;
         try {
             Class<CloudTPClient> tpClass = (Class<CloudTPClient>)Class.forName("com.cloudybench.workload.CloudTPClient");

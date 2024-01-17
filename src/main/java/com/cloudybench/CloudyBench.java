@@ -405,7 +405,7 @@ public class CloudyBench {
                 else if(cmd.equalsIgnoreCase("runCloudTP")){
                     type=8;
 
-                    // 配置渐进式发压
+                    // Workload Pattern Generation
                     Con= new int[total_test_time][hybench.TP_tenant_num];
 
                     // the concurrency in the first minute
@@ -414,7 +414,7 @@ public class CloudyBench {
 
                     // the concurrency in the second minute
                     Con[1][0]=1;
-                    Con[1][1]=5;
+                    Con[1][1]=10;
 
                     Con[2][0]=1;
                     Con[2][1]=1;
