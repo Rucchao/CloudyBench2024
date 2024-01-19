@@ -416,6 +416,7 @@ public class CloudyBench {
                     Con[1][0]=0;
                     //Con[1][1]=0;
 
+                    // the concurrency in the third minute
                     Con[2][0]=1;
                     //Con[2][1]=0;
 
