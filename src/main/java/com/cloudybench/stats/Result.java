@@ -109,6 +109,10 @@ public class Result {
         this.tpTotalList = TpTotalList;
     }
 
+    public double[] getTpsList() {
+        return tpsList;
+    }
+
     public void setTpsList(double[] TpsList) {
         this.tpsList = TpsList;
     }

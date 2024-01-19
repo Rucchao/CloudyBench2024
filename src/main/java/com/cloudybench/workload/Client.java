@@ -199,6 +199,7 @@ public abstract class Client {
 
         else if(taskType == 8){
             threads = concurrency;
+
             tpTotalList=new int[tenant_num];
             tpsList=new double[tenant_num];
         }
@@ -229,6 +230,7 @@ public abstract class Client {
         }
 
         if (threads > 0) {
+            logger.info("The number of threads is "+ threads);
             es = Executors.newFixedThreadPool(threads);
             cs = new ExecutorCompletionService<ClientResult>(es);
         }

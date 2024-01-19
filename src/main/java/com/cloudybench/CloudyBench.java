@@ -274,10 +274,10 @@ public class CloudyBench {
             }
             else {
                 logger.warn("There is no an available tp client");
-                return;
             }
         }
-        logger.info("Task size is "+ tasks.size());
+        if(tasks.size()<1)
+            return;
 
             ExecutorService es = Executors.newFixedThreadPool(tasks.size());
             List<Future> future = new ArrayList<Future>();
@@ -409,20 +409,21 @@ public class CloudyBench {
                     Con= new int[total_test_time][hybench.TP_tenant_num];
 
                     // the concurrency in the first minute
-                    Con[0][0]=1;
-                    Con[0][1]=1;
+                    Con[0][0]=0;
+                    //Con[0][1]=0;
 
                     // the concurrency in the second minute
-                    Con[1][0]=1;
-                    Con[1][1]=10;
+                    Con[1][0]=0;
+                    //Con[1][1]=0;
 
                     Con[2][0]=1;
-                    Con[2][1]=1;
+                    //Con[2][1]=0;
 
                     for (int i = 1; i <= total_test_time; i++) {
                         logger.info("This is the "+i+"-th time slot...");
                         hybench.runCloudTP(hybench.TP_tenant_num, Con[i-1]);
-                        hybench.getRes().printResult(type);
+                        if( hybench.getRes().getTpsList() != null)
+                            hybench.getRes().printResult(type);
                     }
                 }
 
