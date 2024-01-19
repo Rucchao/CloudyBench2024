@@ -21,14 +21,14 @@ tenant_num=2
 url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1
 username_1=postgres
 password_1=postgres
-apclient_1=1
-tpclient_1=1
+apclient_1=1000
+tpclient_1=1000
 
 url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1
 username_2=postgres
 password_2=postgres
-apclient_2=1
-tpclient_2=1
+apclient_2=1000
+tpclient_2=1000
 
 testTime=3
 t1_percent=0
