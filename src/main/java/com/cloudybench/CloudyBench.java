@@ -276,8 +276,26 @@ public class CloudyBench {
                 logger.warn("There is no an available tp client");
             }
         }
-        if(tasks.size()<1)
+        if(tasks.size()<1) {
+            long currentTime = System.currentTimeMillis();
+            long waitTime = 60 * 1000L;
+            long endTime = currentTime + waitTime;
+
+            logger.info("Wait for a minute");
+            try {
+                Thread.sleep(waitTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            logger.info("A minute complete.");
+
+            logger.info("====================Test Summary========================");
+            logger.info("Test starts at " + dateFormat.format(currentTime));
+            logger.info("Test ends at " + dateFormat.format(endTime));
+            logger.info("Concurrency = 0");
+            logger.info("====================Thank you!========================");
             return;
+        }
 
             ExecutorService es = Executors.newFixedThreadPool(tasks.size());
             List<Future> future = new ArrayList<Future>();
@@ -360,7 +378,7 @@ public class CloudyBench {
                 }
             }
             else if(cmd.equalsIgnoreCase("gendata")){
-                DataGenerator_Sales new_dg = new DataGenerator_Sales(Integer.parseInt(ConfigLoader.prop.getProperty("sf")));
+                DataGenerator_Sales new_dg = new DataGenerator_Sales(Integer.parseInt(ConfigLoader.prop.getProperty("sf").split("x")[0]));
                 new_dg.dataGenerator();
                // add loading code for the target DB here
 
