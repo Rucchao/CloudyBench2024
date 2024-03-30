@@ -56,6 +56,8 @@ public abstract class Client {
     static int testid2=300001;
     static int testid3=300001;
     int tenant_num=0;
+
+    int num = 0;
     List<Integer> Related_Blocked_Transfer_ids=null;
     List<Integer> Related_Blocked_Checking_ids=null;
     static HashMap<Integer, Long> delete_map1 = new HashMap<Integer, Long>();
@@ -66,6 +68,10 @@ public abstract class Client {
     static ArrayBlockingQueue<Integer> queue_ids= null;
 
     ExecutorService es = null;//Executors.newFixedThreadPool(5);
+
+    public void setNum(int num) {
+        this.num = num;
+    }
 
     public void setTenant_num(int tenant_num){
         this.tenant_num = tenant_num;
@@ -201,7 +207,7 @@ public abstract class Client {
             threads = concurrency;
 
             tpTotalList=new int[tenant_num];
-            tpsList=new double[tenant_num];
+            tpsList=new double[num];
         }
 
         else if(taskType == 9){
@@ -244,7 +250,7 @@ public abstract class Client {
         int random_num1=rg.getRandomint(1, customer_no+company_no);
         setTestid1(random_num1);
 
-	    int random_num2=rg.getRandomint(customer_no, customer_no+company_no);
+        int random_num2=rg.getRandomint(customer_no, customer_no+company_no);
         setTestid2(random_num2);
 
         int random_num3=rg.getRandomint(customer_no, customer_no+company_no);
@@ -299,7 +305,7 @@ public abstract class Client {
         return client;
     }
 
-    public static Client initTask(Properties cfg,String name,int taskType, int tenant_num, int concurrency) {
+    public static Client initTask(Properties cfg,String name,int taskType, int tenant_num, int concurrency, int num) {
         Client client = null;
         try {
             client = (Client) Class.forName("com.cloudybench.workload." + name).getDeclaredConstructor().newInstance();
@@ -307,6 +313,7 @@ public abstract class Client {
             client.setTask_prop(cfg);
             client.setTaskType(taskType);
             client.setTenant_num(tenant_num);
+            client.setNum(num);
             client.doInit_wrapper(name+tenant_num, concurrency);
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -353,10 +360,10 @@ public abstract class Client {
         }
 
         if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)){
-                ret.setApclient(threads);
+            ret.setApclient(threads);
         }
 
-	    ret.setRiskRate(String.valueOf(risk_rate));
+        ret.setRiskRate(String.valueOf(risk_rate));
 
         final int _fresh_interval = intParameter("fresh_interval",20);
 
@@ -450,7 +457,7 @@ public abstract class Client {
                             }
 
                         }
-                        
+
                         stopTask();
 
                     } catch (InterruptedException e) {

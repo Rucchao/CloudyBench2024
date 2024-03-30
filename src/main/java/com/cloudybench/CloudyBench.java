@@ -68,7 +68,7 @@ public class CloudyBench {
             job.setSqls(sqls);
             tasks.add(job);
         }
-	    else {
+        else {
             logger.warn("There is no an available tp client");
             return;
         }
@@ -76,10 +76,10 @@ public class CloudyBench {
         List<Future> future = new ArrayList<Future>();
         for (final Client j : tasks) {
             future.add( es.submit(new Runnable() {
-                    public void run() {
-                    j.startTask();
-                }
-                })
+                        public void run() {
+                            j.startTask();
+                        }
+                    })
             );
         }
         for(int flength=0;flength < future.size();flength++) {
@@ -265,18 +265,18 @@ public class CloudyBench {
             int client=Conlist[i-1];
             logger.info("Tenant"+ i + " has a concurrency of "+client);
             if(client > 0){
-                Client job = Client.initTask(ConfigLoader.prop,"CloudTPClient",taskType, i, client);
+                Client job = Client.initTask(ConfigLoader.prop,"CloudTPClient",taskType, i, client, tenant_num);
                 //Result res_tenant = new Result(i);
                 job.setRet(res);
                 job.setVerbose(verbose);
                 job.setSqls(sqls);
                 tasks.add(job);
-            }
-            else {
+            } else {
                 logger.warn("There is no an available tp client");
             }
         }
         if(tasks.size()<1) {
+
             long currentTime = System.currentTimeMillis();
             long waitTime = 60 * 1000L;
             long endTime = currentTime + waitTime;
@@ -294,36 +294,39 @@ public class CloudyBench {
             logger.info("Test ends at " + dateFormat.format(endTime));
             logger.info("Concurrency = 0");
             logger.info("====================Thank you!========================");
+
+
             return;
         }
 
-            ExecutorService es = Executors.newFixedThreadPool(tasks.size());
-            List<Future> future = new ArrayList<Future>();
-            for (final Client j : tasks) {
-                future.add( es.submit(new Runnable() {
-                            public void run() {
-                                j.startTask();
-                            }
-                        })
-                );
-            }
-            for(int flength=0;flength < future.size();flength++) {
-                Future f = future.get(flength);
-                if (f != null && !f.isCancelled() && !f.isDone()) {
-                    try {
-                        f.get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+
+        ExecutorService es = Executors.newFixedThreadPool(tasks.size());
+        List<Future> future = new ArrayList<Future>();
+        for (final Client j : tasks) {
+            future.add( es.submit(new Runnable() {
+                        public void run() {
+                            j.startTask();
+                        }
+                    })
+            );
+        }
+        for(int flength=0;flength < future.size();flength++) {
+            Future f = future.get(flength);
+            if (f != null && !f.isCancelled() && !f.isDone()) {
+                try {
+                    f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
+        }
 
-            if (!es.isShutdown() || !es.isTerminated()) {
-                es.shutdownNow();
-            }
-            res.setEndTs(dateFormat.format(new Date()));
+        if (!es.isShutdown() || !es.isTerminated()) {
+            es.shutdownNow();
+        }
+        res.setEndTs(dateFormat.format(new Date()));
 
 
         logger.info("Cloud TP Workload is done.");
@@ -380,7 +383,7 @@ public class CloudyBench {
             else if(cmd.equalsIgnoreCase("gendata")){
                 DataGenerator_Sales new_dg = new DataGenerator_Sales(Integer.parseInt(ConfigLoader.prop.getProperty("sf").split("x")[0]));
                 new_dg.dataGenerator();
-               // add loading code for the target DB here
+                // add loading code for the target DB here
 
             }
             else if(cmd.startsWith("run")) {
@@ -427,22 +430,32 @@ public class CloudyBench {
                     Con= new int[total_test_time][hybench.TP_tenant_num];
 
                     // the concurrency in the first minute
-                    Con[0][0]=0;
-                    //Con[0][1]=0;
+                    Con[0][0]=5;
+                    //Con[0][1]=5;
+
 
                     // the concurrency in the second minute
-                    Con[1][0]=0;
-                    //Con[1][1]=0;
+                    Con[1][0]=5;
+                    //Con[1][1]=5;
+
 
                     // the concurrency in the third minute
-                    Con[2][0]=1;
-                    //Con[2][1]=0;
+                    Con[2][0]=5;
+                    //Con[2][1]=5;
+
 
                     for (int i = 1; i <= total_test_time; i++) {
                         logger.info("This is the "+i+"-th time slot...");
                         hybench.runCloudTP(hybench.TP_tenant_num, Con[i-1]);
-                        if( hybench.getRes().getTpsList() != null)
-                            hybench.getRes().printResult(type);
+                        // if( hybench.getRes().getTpsList() != null && Con[i - 1][0] > 0)
+                        for (int j = 0; j < hybench.TP_tenant_num; j++) {
+                            if (Con[i - 1][j] != 0) {
+                                hybench.getRes().printResult(type);
+                                break;
+                            }
+                        }
+                        // if( hybench.getRes().getTpsList() != null)
+                        //     hybench.getRes().printResult(type);
                     }
                 }
 

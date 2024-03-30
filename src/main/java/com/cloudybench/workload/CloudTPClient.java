@@ -27,9 +27,9 @@ public class CloudTPClient extends Client {
     // set init parameter before run
     @Override
     public void doInit() {
-        tp1_percent = intParameter("t1_percent",15);
-        tp2_percent = intParameter("t2_percent",5);
-        tp3_percent = intParameter("t3_percent",80);
+        tp1_percent = intParameter("t1_percent_" + tenant_num,15);
+        tp2_percent = intParameter("t2_percent_" + tenant_num,5);
+        tp3_percent = intParameter("t3_percent_" + tenant_num,80);
 
         if( (tp1_percent + tp2_percent + tp3_percent) != 100 ){
             logger.error("TP analytical transaction percentage is not equal 100");
@@ -224,7 +224,7 @@ public class CloudTPClient extends Client {
             Class<CloudTPClient> tpClass = (Class<CloudTPClient>)Class.forName("com.cloudybench.workload.CloudTPClient");
             if(type == 8){
                 while(!exitFlag) {
-                    cr = execTxn1(conn);
+                    // cr = execTxn1(conn);
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
                         cr = execTxn1(conn);

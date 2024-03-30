@@ -31,9 +31,13 @@ apclient_2=1000
 tpclient_2=1000
 
 testTime=3
-t1_percent=0
-t2_percent=0
-t3_percent=100
+t1_percent_1=0
+t2_percent_1=0
+t3_percent_1=100
+
+t1_percent_2=100
+t2_percent_2=0
+t3_percent_2=0
 
 tpclient=1
 apclient=1
