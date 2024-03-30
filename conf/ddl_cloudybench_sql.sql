@@ -1,0 +1,30 @@
+CREATE TABLE dbo.customer (
+C_ID int IDENTITY(1, 1) PRIMARY KEY,
+C_NAME char(15),
+C_GENDER char(6),
+C_AGE int,
+C_PROVINCE char(15),
+C_CITY char(15),
+C_CREDIT real,
+C_CREATEDDATE Date,
+C_UPDATEDDATE datetime
+);
+
+CREATE TABLE dbo.orders (
+O_ID int IDENTITY(1, 1) PRIMARY KEY,
+O_C_ID int,
+O_DATE Date,
+O_STATUS char(10),
+O_TOTALAMOUNT real,
+O_UPDATEDDATE datetime
+);
+
+CREATE TABLE orderline (
+OL_ID int IDENTITY(1, 1) PRIMARY KEY,
+OL_O_ID int,
+OL_P_ID int,
+OL_QUANTITY int,
+OL_TOTALAMOUNT real,
+OL_UPDATEDDATE datetime
+);
+
