@@ -3,10 +3,16 @@ sql = "INSERT INTO orderline VALUES (DEFAULT, ?,?,?,?,?);"
 
 [TP-2]
 sql = [
-    "SELECT O_ID, O_C_ID, O_TOTALAMOUNT, O_UPDATEDDATE FROM orders WHERE o_status='unpaid' ORDER BY RANDOM() LIMIT 1",
-    "UPDATE customer SET C_CREDIT=?, C_UPDATEDDATE=? WHERE C_ID=?",
-    "UPDATE orders SET O_UPDATEDDATE=? WHERE O_ID=?"
+    "SELECT O_ID, O_C_ID, O_TOTALAMOUNT, O_UPDATEDDATE FROM orders WHERE o_status='unpaid' ORDER BY RANDOM() LIMIT 1;",
+    "UPDATE customer SET C_CREDIT=?, C_UPDATEDDATE=? WHERE C_ID=?;",
+    "UPDATE orders SET O_UPDATEDDATE=?, o_status='paid' WHERE O_ID=?;"
 ]
 
 [TP-3]
 sql = "SELECT O_ID, O_DATE, O_STATUS FROM orders WHERE O_C_ID = ? order by O_UPDATEDDATE desc limit 1;"
+
+[TP-4]
+sql = [
+    "SELECT OL_ID FROM orderline ORDER BY RANDOM() LIMIT 1;",
+    "Delete from orderline WHERE OL_ID=?;",
+]

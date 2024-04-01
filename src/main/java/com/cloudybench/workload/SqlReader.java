@@ -32,6 +32,7 @@ public class SqlReader {
             sqls.setTp_txn1((toml.getString("TP-1.sql")));
             sqls.setTp_txn2(getSqlArrayFromList(toml.getList("TP-2.sql")));
             sqls.setTp_txn3(toml.getString("TP-3.sql"));
+            sqls.setTp_txn4(getSqlArrayFromList(toml.getList("TP-4.sql")));
 
         }catch(Exception e){
             e.printStackTrace();

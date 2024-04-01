@@ -68,18 +68,6 @@ public abstract class Client {
         this.tenant_num = tenant_num;
     }
 
-    public void setTestid1(int random_num){
-        this.testid1 = random_num;
-    }
-
-    public void setTestid2(int random_num){
-        this.testid2 = random_num;
-    }
-
-    public void setTestid3(int random_num){
-        this.testid3 = random_num;
-    }
-
     public void setVerbose(boolean verbose){
         this.verbose = verbose;
     }
@@ -324,7 +312,7 @@ public abstract class Client {
 
                             if(verbose){
                                 if(clientName.equalsIgnoreCase("CloudLagTime")) {
-                                    for(int tpidx = 0;tpidx < 3;tpidx++) {
+                                    for(int tpidx = 0;tpidx < 4;tpidx++) {
                                         if(hist.getTPItem(tpidx).getN() == 0)
                                             continue;
                                         logger.info("Transaction " + (tpidx+1)

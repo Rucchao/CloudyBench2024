@@ -77,10 +77,10 @@ public class CloudLagTime extends Client {
 
             String sql="select max(ol_id) from orderline;";
             pstmt=conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();//获得主键的自增Id
+            ResultSet rs = pstmt.executeQuery();
             int newid=0;
             if (rs.next())
-                newid = rs.getInt(1);//Id在结果集中的第一位
+                newid = rs.getInt(1);
             // logger.info("The new id is "+newid);
             rs.close();
             pstmt.close();
@@ -145,11 +145,11 @@ public class CloudLagTime extends Client {
     }
 
     // Payment
-    public ClientResult execTxn2(Connection conn) {
+    public ClientResult execTxn2(Connection conn, Connection conn_replica) {
 
         ClientResult cr = new ClientResult();
         PreparedStatement pstmt[] = new PreparedStatement[3];
-        ;
+        PreparedStatement pstmt_replica = null;
         ResultSet rs = null;
         long responseTime = 0L;
         java.sql.Timestamp ts = null;
@@ -166,18 +166,18 @@ public class CloudLagTime extends Client {
             conn.setAutoCommit(false);
             // get order info
             rs = pstmt[0].executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 O_ID = rs.getInt(1);
                 O_C_ID = rs.getInt(2);
                 O_TOTALAMOUNT = rs.getDouble(3);
                 ts = rs.getTimestamp(4);
-                break;
             }
             rs.close();
 
             Date date = new Date(ts.getTime());
             Date new_date = DateUtility.OneDayAfter(date);
             Timestamp new_ts = new Timestamp(new_date.getTime());
+           // logger.info("The primary ts is "+ new_ts);
 
             // update customer's credit
             pstmt[1].setDouble(1, O_TOTALAMOUNT);
@@ -192,6 +192,42 @@ public class CloudLagTime extends Client {
             pstmt[2].executeUpdate();
             pstmt[2].close();
             conn.commit();
+
+            // get the data from the replica
+            String sql2="select O_UPDATEDDATE from orders where o_id=?";
+            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica.setInt(1, O_ID);
+
+            // count the lag time
+            boolean Islag=false;
+            Timestamp fresh_ts=null;
+            ResultSet rs2 = pstmt_replica.executeQuery();
+            if (rs2.next())
+                 fresh_ts= rs2.getTimestamp(1);// get the record
+            //logger.info("The replica ts is "+fresh_ts);
+
+            // record the lag time
+            long lagStartTs = System.currentTimeMillis();
+
+            while (!fresh_ts.equals(new_ts)){
+                logger.info("the replica data is stale!");
+                Islag=true;
+                rs2 = pstmt_replica.executeQuery();// get the fresh record
+                if (rs2.next())
+                    fresh_ts = rs2.getTimestamp(1);
+            }
+
+            long lagEndTs = System.currentTimeMillis();
+
+            if(Islag){
+                long lag=lagEndTs-lagStartTs;
+                logger.info("the lag time is "+lag+ " ms.");
+                lagtime.add(lag);
+            }
+
+            rs2.close();
+            pstmt_replica.close();
+            conn_replica.commit();
 
             long currentEndTs = System.currentTimeMillis();
             responseTime = currentEndTs - currentStarttTs;
@@ -217,44 +253,88 @@ public class CloudLagTime extends Client {
         return cr;
     }
 
-    // Order Status
-    public ClientResult execTxn3(Connection conn) {
+    // Order Deletion
+    public ClientResult execTxn4(Connection conn, Connection conn_replica) {
+
         ClientResult cr = new ClientResult();
-        PreparedStatement pstmt = null;
+        PreparedStatement pstmt[] = new PreparedStatement[2];
+        PreparedStatement pstmt_replica = null;
+        ResultSet rs = null;
         long responseTime = 0L;
-        // transaction parameter
-        int C_ID = rg.getRandomint(1,customer_id);
+        java.sql.Timestamp ts = null;
         try {
             long currentStarttTs = System.currentTimeMillis();
+            int OL_ID = 0;
+            String[] statements = sqls.tp_txn4();
+            pstmt[0] = conn.prepareStatement(statements[0]);
+            pstmt[1] = conn.prepareStatement(statements[1]);
             // transaction begins
             conn.setAutoCommit(false);
-            pstmt = conn.prepareStatement(sqls.tp_txn3());
-            pstmt.setInt(1,C_ID);
-            ResultSet rs = pstmt.executeQuery();
+            // get order info
+            rs = pstmt[0].executeQuery();
+            if (rs.next()) {
+                OL_ID = rs.getInt(1);
+            }
             rs.close();
+
+            // delete the order
+            pstmt[1].setInt(1, OL_ID);
+            pstmt[1].executeUpdate();
+            //logger.info("The record " + OL_ID + " has been deleted!");
             conn.commit();
+
+            // get the data from the replica
+            String sql2="select OL_ID from orderline where ol_id=?";
+            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica.setInt(1, OL_ID);
+
+            // count the lag time
+            boolean Islag=false;
+            ResultSet rs2 = pstmt_replica.executeQuery();
+
+            // record the lag time
+            long lagStartTs = System.currentTimeMillis();
+
+            while (rs2.next()){
+                logger.info("the replica data is stale!");
+                Islag=true;
+                rs2 = pstmt_replica.executeQuery();// get the fresh record
+            }
+
+            long lagEndTs = System.currentTimeMillis();
+
+            if(Islag){
+                long lag=lagEndTs-lagStartTs;
+                logger.info("the lag time is "+lag+ " ms.");
+                lagtime.add(lag);
+            }
+
+            conn_replica.commit();
+            rs2.close();
+
             long currentEndTs = System.currentTimeMillis();
             responseTime = currentEndTs - currentStarttTs;
-            hist.getTPItem(2).addValue(responseTime);
+            hist.getTPItem(1).addValue(responseTime);
             lock.lock();
             tpTotalCount++;
             lock.unlock();
             cr.setRt(responseTime);
-        } catch (SQLException e) {
+        }  catch (SQLException e) {
             e.printStackTrace();
             cr.setResult(false);
             cr.setErrorMsg(e.getMessage());
             cr.setErrorCode(String.valueOf(e.getErrorCode()));
         }  finally {
             try {
-                pstmt.close();
+                pstmt[0].close();
+                pstmt[1].close();
+                pstmt_replica.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return cr;
     }
-
 
     public ClientResult execute() {
         int type = getTaskType();
@@ -276,10 +356,10 @@ public class CloudLagTime extends Client {
                         cr = execTxn1(conn, conn_replica);
                     }
                     else if(rand < tp1_percent + tp2_percent){
-                        cr = execTxn2(conn);
+                        cr = execTxn2(conn,conn_replica);
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
-                        cr = execTxn3(conn);
+                        cr = execTxn4(conn,conn_replica);
                     }
                     totalElapsedTime += cr.getRt();
                     if(exitFlag)

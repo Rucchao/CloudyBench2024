@@ -49,7 +49,7 @@ public class CloudTPClient extends Client {
     // 3 Transactions
 
     // New Orderline
-    public ClientResult execTxn1(Connection conn, Connection conn_replica) {
+    public ClientResult execTxn1(Connection conn) {
 
         ClientResult cr = new ClientResult();
         // add a new orderline
@@ -60,7 +60,6 @@ public class CloudTPClient extends Client {
         Date date = rg.getRandomTimestamp(CR.midPointDate, CR.endDate);
         java.sql.Timestamp ts = new Timestamp(date.getTime());
         PreparedStatement pstmt = null;
-        PreparedStatement pstmt_replica = null;
         long responseTime = 0L;
         try {
             long currentStarttTs = System.currentTimeMillis();
@@ -218,7 +217,6 @@ public class CloudTPClient extends Client {
 
         // get the tenant url
         Connection conn = ConnectionMgr.getConnection(tenant_num,true);
-        Connection conn_replica = ConnectionMgr.getReplicaConnection();
 
         logger.info("This is tenant "+tenant_num);
         long totalElapsedTime = 0L;
@@ -229,7 +227,7 @@ public class CloudTPClient extends Client {
                     // cr = execTxn1(conn);
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
-                        cr = execTxn1(conn, conn_replica);
+                        cr = execTxn1(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent){
                         cr = execTxn2(conn);

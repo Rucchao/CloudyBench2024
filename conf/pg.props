@@ -6,13 +6,14 @@ classname=org.postgresql.Driver
 
 username=postgres
 password=postgres
+verbose=false
 
 url=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 tpclient=1
 tpRunMins=1
-t1_percent=100
-t2_percent=0
-t3_percent=0
+t1_percent=80
+t2_percent=10
+t3_percent=10
 
 url_replica=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 classname_replica=org.postgresql.Driver

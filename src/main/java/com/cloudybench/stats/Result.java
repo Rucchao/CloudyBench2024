@@ -24,14 +24,8 @@ public class Result {
     private double[] apsList;
     private long tpTotal;
     private long apTotal;
-    private long atTotal;
-    private long iqTotal;
     private double tps;
     private double qps;
-    private double xptps;
-    private double xpqps;
-    private double atps;
-    private double iqps;
     private String startTS ;
     private String endTs;
     private Histogram hist;
@@ -221,7 +215,6 @@ public class Result {
         logger.info("====================Test Summary========================");
         logger.info("Test starts at " + getStartTS());
         logger.info("Test ends at " + getEndTs());
-	    logger.info("Risk Rate is " + getRiskRate());
         switch(type){
             case 1:
                 logger.info("TP Concurrency is " + getTpclient());
@@ -231,9 +224,9 @@ public class Result {
         }
         logger.info("Query/Transaction response time(ms) histogram : ");
 
-        if(type == 1 || type == 6) {
+        if(type == 1) {
             System.out.println("------------TP-------------------");
-            for (int tpidx = 0; tpidx < 18; tpidx++) {
+            for (int tpidx = 0; tpidx < 3; tpidx++) {
                 System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
                         (tpidx + 1),
                         hist.getTPItem(tpidx).getMax(),
@@ -242,9 +235,7 @@ public class Result {
                         hist.getTPItem(tpidx).getPercentile(95),
                         hist.getTPItem(tpidx).getPercentile(99));
             }
-        }
 
-        if(type == 1){
             logger.info("-----------Avg-Lag-Time--------------------");
             logger.info("Lag Time (ms) : "+ getLagtime() * 1.0);
         }
@@ -263,22 +254,4 @@ public class Result {
 
         logger.info("====================Thank you!========================");
     }
-
-
-    public double getXptps() {
-        return xptps;
-    }
-
-    public double getXpqps() {
-        return xpqps;
-    }
-
-    public long getAtTotal() {
-        return atTotal;
-    }
-
-    public long getIqTotal() {
-        return iqTotal;
-    }
-
 }

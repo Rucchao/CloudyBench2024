@@ -13,6 +13,7 @@ public class Sqlstmts {
     private  String tp_txn1 = null;
     private  String[] tp_txn2 = null;
     private  String tp_txn3 = null;
+    private  String[] tp_txn4 = null;
 
     public String tp_txn1() {
         return tp_txn1;
@@ -36,6 +37,14 @@ public class Sqlstmts {
 
     public void setTp_txn3(String tp_txn3) {
         this.tp_txn3 = tp_txn3;
+    }
+
+    public String[] tp_txn4() {
+        return tp_txn4;
+    }
+
+    public void setTp_txn4(String[] tp_txn4) {
+        this.tp_txn4 = tp_txn4;
     }
 
 }
