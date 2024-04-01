@@ -37,16 +37,13 @@ public abstract class Client {
     private String clientName = "";
     int threads = 0;
     static long tpTotalCount = 0L;
-    static long apTotalCount = 0L;
-    static long atTotalCount = 0L;
-    static long iqTotalCount = 0L;
-    static long apTotalTime = 0L;
     static int[] tpTotalList;
     static double[] tpsList;
     static int[] apTotalList;
     static double[] apsList;
+    ArrayList<Long> lagtime;
     Lock lock = new ReentrantLock();
-    protected int taskType = 0; // 0 : xp,   1: tp,  2 : appower, 3:htap,  4: fresh, 6: all, 7: ap
+    protected int taskType = 0;
     ConfigReader CR = null;
     Result ret = null;
     Histogram hist = null;
@@ -58,14 +55,8 @@ public abstract class Client {
     int tenant_num=0;
 
     int num = 0;
-    List<Integer> Related_Blocked_Transfer_ids=null;
-    List<Integer> Related_Blocked_Checking_ids=null;
-    static HashMap<Integer, Long> delete_map1 = new HashMap<Integer, Long>();
-    static  HashMap<Integer, Long> delete_map2 = new HashMap<Integer, Long>();
     RandomGenerator rg = new RandomGenerator();
 
-    double risk_rate=0;
-    static ArrayBlockingQueue<Integer> queue_ids= null;
 
     ExecutorService es = null;//Executors.newFixedThreadPool(5);
 
@@ -201,11 +192,11 @@ public abstract class Client {
         }
         else if(taskType == 1){
             threads = intParameter("tpclient");
+            lagtime= new ArrayList<Long>();
         }
 
         else if(taskType == 8){
             threads = concurrency;
-
             tpTotalList=new int[tenant_num];
             tpsList=new double[num];
         }
@@ -219,65 +210,11 @@ public abstract class Client {
         CR = new ConfigReader("cloudybench");
         String db = strParameter("db");
         setDbType(getDbType(db));
-        if(clientName.equals("APClient") ){
-            if(taskType == 0 || taskType == 4){
-                threads = intParameter("xapclient");
-            }
-            else if( taskType == 7){
-                threads = intParameter("apclient");
-            }
-            else if(taskType == 2) {
-                threads = 1;
-            }
-
-            else{
-                threads = 0;
-            }
-        }
 
         if (threads > 0) {
             logger.info("The number of threads is "+ threads);
             es = Executors.newFixedThreadPool(threads);
             cs = new ExecutorCompletionService<ClientResult>(es);
-        }
-        int contention_num = intParameter("contention_num",100);
-        risk_rate = Double.valueOf(ConfigLoader.prop.getProperty("risk_rate","0.1"));
-        queue_ids=new ArrayBlockingQueue<Integer>(contention_num);
-        //set test id
-        int customer_no = 1;
-        int company_no = 1;
-
-        int random_num1=rg.getRandomint(1, customer_no+company_no);
-        setTestid1(random_num1);
-
-        int random_num2=rg.getRandomint(customer_no, customer_no+company_no);
-        setTestid2(random_num2);
-
-        int random_num3=rg.getRandomint(customer_no, customer_no+company_no);
-        setTestid3(random_num3);
-
-        try {
-            // load the blocking-related transfer accounts
-            String DataPath = "Data_" + ConfigLoader.prop.getProperty("sf");
-            FileInputStream fi1 = new FileInputStream(new File(DataPath+"/Related_transfer_bids"));
-            ObjectInputStream oi1 = new ObjectInputStream(fi1);
-            // Read objects
-            Related_Blocked_Transfer_ids = (List<Integer>) oi1.readObject();
-            oi1.close();
-            fi1.close();
-
-            // load the blocking-related checking accounts
-            FileInputStream fi2 = new FileInputStream(new File(DataPath+"/Related_checking_bids"));
-            ObjectInputStream oi2 = new ObjectInputStream(fi2);
-            // Read objects
-            Related_Blocked_Checking_ids = (List<Integer>) oi2.readObject();
-            oi2.close();
-            fi2.close();
-
-        } catch (FileNotFoundException e) {
-            logger.error("File not found");
-        } catch (IOException | ClassNotFoundException e) {
-            logger.error("Error initializing stream");
         }
 
         doInit();
@@ -340,17 +277,8 @@ public abstract class Client {
             hist = ret.getHist();
         }
 
-        if(clientName.equalsIgnoreCase("APClient")){
-            if(taskType == 0 || taskType == 4)
-                ret.setXapclient(threads);
-            else
-                ret.setApclient(threads);
-        }
-
-        if(clientName.equalsIgnoreCase("TPClient")){
-            if(taskType == 0 || taskType == 4)
-                ret.setXtpclient(threads);
-            else
+        if(clientName.equalsIgnoreCase("CloudLagTime")){
+            if(taskType == 1)
                 ret.setTpclient(threads);
         }
 
@@ -362,10 +290,6 @@ public abstract class Client {
         if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)){
             ret.setApclient(threads);
         }
-
-        ret.setRiskRate(String.valueOf(risk_rate));
-
-        final int _fresh_interval = intParameter("fresh_interval",20);
 
         round = intParameter("apround",1);
 
@@ -387,6 +311,7 @@ public abstract class Client {
         }
 
         setTestTime(testTime);
+
         if (_duration > 0) {
             timer = new Thread() {
                 public void run() {
@@ -396,25 +321,10 @@ public abstract class Client {
                         for (int i = 0; i < 10; i++) {
                             Thread.sleep(_duration * 60 * 100L);
                             elpased_time += _duration * 60 * 100L;
+
                             if(verbose){
-                                if(clientName.equalsIgnoreCase("APClient")) {
-                                    for(int apidx = 0;apidx < 13;apidx++) {
-                                        if(hist.getAPItem(apidx).getN() == 0)
-                                            continue;
-                                        logger.info("Query " + (apidx+1)
-                                                + " : max rt : " + hist.getAPItem(apidx).getMax()
-                                                + " | min rt :" + hist.getAPItem(apidx).getMin()
-                                                + " | avg rt : " + String.format("%.2f",hist.getAPItem(apidx).getMean())
-                                                + " | 95% rt : " + String.format("%.2f",hist.getAPItem(apidx).getPercentile(95))
-                                                + " | 99% rt : " + String.format("%.2f",hist.getAPItem(apidx).getPercentile(99)));
-                                    }
-                                    if(taskType == 4 || taskType == 0)
-                                        logger.info("Current " + (i + 1) + "/10 time AP QPS is " + String.format("%.2f", iqTotalCount / (elpased_time / 1000.0)));
-                                    else
-                                        logger.info("Current " + (i + 1) + "/10 time AP QPS is " + String.format("%.2f", apTotalCount / (elpased_time / 1000.0)));
-                                }
-                                if(clientName.equalsIgnoreCase("TPClient")) {
-                                    for(int tpidx = 0;tpidx < 18;tpidx++) {
+                                if(clientName.equalsIgnoreCase("CloudLagTime")) {
+                                    for(int tpidx = 0;tpidx < 3;tpidx++) {
                                         if(hist.getTPItem(tpidx).getN() == 0)
                                             continue;
                                         logger.info("Transaction " + (tpidx+1)
@@ -424,13 +334,10 @@ public abstract class Client {
                                                 + " | 95% rt : " + String.format("%.2f",hist.getTPItem(tpidx).getPercentile(95))
                                                 + " | 99% rt : " + String.format("%.2f",hist.getTPItem(tpidx).getPercentile(99)));
                                     }
-                                    if(taskType == 4 || taskType == 0)
-                                        logger.info("Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", atTotalCount / (elpased_time / 1000.0)));
-                                    else
-                                        logger.info("Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalCount / (elpased_time / 1000.0)));
+                                    logger.info("Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalCount / (elpased_time / 1000.0)));
                                 }
                                 if(clientName.equalsIgnoreCase("CloudTPClient"+tenant_num)) {
-                                    for(int tpidx = 0;tpidx < 18;tpidx++) {
+                                    for(int tpidx = 0;tpidx < 3;tpidx++) {
                                         if(hist.getTPItem(tpidx).getN() == 0)
                                             continue;
 //                                        logger.info("Transaction " + (tpidx+1)
@@ -508,32 +415,11 @@ public abstract class Client {
             }
         }
 
-        if(clientName.equalsIgnoreCase("APClient")){
-            if(taskType == 2){
-                ret.setApRound(round);
-                ret.setApTotal(apTotalCount);
-                ret.setQps(Double.valueOf(String.format("%.2f",apTotalCount/(apTotalTime/1000.0))));
-            }
-            else if(taskType == 0 || taskType == 4 ){
-                ret.setIqTotal(iqTotalCount);
-                ret.setXpqps(Double.valueOf(String.format("%.2f",iqTotalCount/(testDuration * 60.0))));
-            }
-            else if(taskType == 7){
-                ret.setApTotal(apTotalCount);
-                ret.setApRound(_res.getApRound());
-                ret.setQps(Double.valueOf(String.format("%.2f",apTotalCount/(maxElapsedTime/1000.0))));
-            }
-        }
-
-        if(clientName.equalsIgnoreCase("TPClient")) {
-
+        if(clientName.equalsIgnoreCase("CloudLagTime")) {
             if (taskType == 1) {
                 ret.setTpTotal(tpTotalCount);
+                ret.setlagList(lagtime);
                 ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
-            }
-            else if(taskType == 0 || taskType == 4){
-                ret.setAtTotal(atTotalCount);
-                ret.setXptps(Double.valueOf(String.format("%.2f",atTotalCount/(testDuration * 60.0))));
             }
         }
 

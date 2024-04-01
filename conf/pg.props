@@ -2,61 +2,54 @@ sf=1x
 
 db=postgreSQL
 classname=org.postgresql.Driver
-classname_ap=org.postgresql.Driver
+
 
 username=postgres
 password=postgres
 
-username_ap=postgres
-password_ap=postgres
+url=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+tpclient=1
+tpRunMins=1
+t1_percent=100
+t2_percent=0
+t3_percent=0
 
-url=jdbc:postgresql://localhost:5432/cloudybench_sf1
-url_tp=jdbc:postgresql://localhost:5432/cloudybench_sf1
-url_ap=jdbc:postgresql://localhost:5432/cloudybench_sf1
-
+url_replica=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+classname_replica=org.postgresql.Driver
+username_replica=postgres
+password_replica=postgres
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=2
 
-url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1
+url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 username_1=postgres
 password_1=postgres
 apclient_1=1000
 tpclient_1=1000
 
-url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1
+url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 username_2=postgres
 password_2=postgres
 apclient_2=1000
 tpclient_2=1000
 
-testTime=3
-t1_percent_1=0
+testTime=1
+
+t1_percent_1=100
 t2_percent_1=0
-t3_percent_1=100
+t3_percent_1=0
 
 t1_percent_2=100
 t2_percent_2=0
 t3_percent_2=0
 
-tpclient=1
-apclient=1
-
 
 fresh_interval=20
 
-apRunMins=1
-tpRunMins=1
-xpRunMins=1
 
-risk_rate=0.1
-contention_num=100
 
 dist=uniform
 power_alpha=0.1
 
 apround=1
-
-xtpclient=1
-xapclient=1
-

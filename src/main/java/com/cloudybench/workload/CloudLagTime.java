@@ -15,7 +15,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CloudTPClient extends Client {
+public class CloudLagTime extends Client {
     int tp1_percent = 15;
     int tp2_percent = 5;
     int tp3_percent = 80;
@@ -27,9 +27,9 @@ public class CloudTPClient extends Client {
     // set init parameter before run
     @Override
     public void doInit() {
-        tp1_percent = intParameter("t1_percent_" + tenant_num,15);
-        tp2_percent = intParameter("t2_percent_" + tenant_num,5);
-        tp3_percent = intParameter("t3_percent_" + tenant_num,80);
+        tp1_percent = intParameter("t1_percent",15);
+        tp2_percent = intParameter("t2_percent",5);
+        tp3_percent = intParameter("t3_percent",80);
 
         if( (tp1_percent + tp2_percent + tp3_percent) != 100 ){
             logger.error("TP analytical transaction percentage is not equal 100");
@@ -74,15 +74,59 @@ public class CloudTPClient extends Client {
             pstmt.setDouble(4, OL_AMOUNT);
             pstmt.setTimestamp(5, ts);
             pstmt.executeUpdate();
+
+            String sql="select max(ol_id) from orderline;";
+            pstmt=conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();//获得主键的自增Id
+            int newid=0;
+            if (rs.next())
+                newid = rs.getInt(1);//Id在结果集中的第一位
+            // logger.info("The new id is "+newid);
+            rs.close();
             pstmt.close();
             conn.commit();
+
+            // get the data from the replica
+            String sql2="select ol_id from orderline where ol_id=?";
+            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica.setInt(1,newid);
+
+            // count the lag time
+            boolean Islag=false;
+            int replicaid=0;
+            ResultSet rs2 = pstmt_replica.executeQuery();// max id
+            if (rs2.next())
+                replicaid = rs2.getInt(1);// get the record
+            //logger.info("The replica id is "+replicaid);
+
+            // record the lag time
+            long lagStartTs = System.currentTimeMillis();
+
+            while (replicaid==0){
+                logger.info("the replica data is stale!");
+                Islag=true;
+                rs2 = pstmt_replica.executeQuery();// get the fresh record
+                if (rs2.next())
+                    replicaid = rs2.getInt(1);
+            }
+
+            long lagEndTs = System.currentTimeMillis();
+
+            if(Islag){
+                long lag=lagEndTs-lagStartTs;
+                logger.info("the lag time is "+lag+ " ms.");
+                lagtime.add(lag);
+            }
+
+            rs2.close();
+            pstmt_replica.close();
+            conn_replica.commit();
 
             long currentEndTs = System.currentTimeMillis();
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(0).addValue(responseTime);
             lock.lock();
-            //logger.info("current tenant_num is "+tenant_num);
-            tpTotalList[tenant_num-1]++;
+            tpTotalCount++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -153,7 +197,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(1).addValue(responseTime);
             lock.lock();
-            tpTotalList[tenant_num - 1]++;
+            tpTotalCount++;
             lock.unlock();
             cr.setRt(responseTime);
         }  catch (SQLException e) {
@@ -193,7 +237,7 @@ public class CloudTPClient extends Client {
             responseTime = currentEndTs - currentStarttTs;
             hist.getTPItem(2).addValue(responseTime);
             lock.lock();
-            tpTotalList[tenant_num-1]++;
+            tpTotalCount++;
             lock.unlock();
             cr.setRt(responseTime);
         } catch (SQLException e) {
@@ -211,20 +255,20 @@ public class CloudTPClient extends Client {
         return cr;
     }
 
+
     public ClientResult execute() {
         int type = getTaskType();
         ClientResult ret = new ClientResult();
         ClientResult cr = null;
 
         // get the tenant url
-        Connection conn = ConnectionMgr.getConnection(tenant_num,true);
+        Connection conn = ConnectionMgr.getConnection();
         Connection conn_replica = ConnectionMgr.getReplicaConnection();
 
-        logger.info("This is tenant "+tenant_num);
         long totalElapsedTime = 0L;
         try {
-            Class<CloudTPClient> tpClass = (Class<CloudTPClient>)Class.forName("com.cloudybench.workload.CloudTPClient");
-            if(type == 8){
+            Class<CloudLagTime> tpClass = (Class<CloudLagTime>)Class.forName("com.cloudybench.workload.CloudLagTime");
+            if(type == 1){
                 while(!exitFlag) {
                     // cr = execTxn1(conn);
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);

@@ -57,6 +57,43 @@ public class ConnectionMgr {
         }
         return conn;
     }
+
+    public static Connection getReplicaConnection(){
+        Connection conn = null;
+        Properties prop = new Properties();
+        try {
+            FileInputStream fis = new FileInputStream(ConfigLoader.confFile);
+            prop.load(fis);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            logger.error("Read configure failed : " + ConfigLoader.confFile,e  );
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            logger.error("Read configure failed : " + ConfigLoader.confFile,e);
+            e.printStackTrace();
+        }
+
+        try {
+            Class.forName(prop.getProperty("classname_replica"));
+            //DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
+            conn = DriverManager.getConnection(
+                    prop.getProperty("url_replica"),
+                    prop.getProperty("username_replica"),
+                    prop.getProperty("password_replica"));
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            logger.error( "Getting connection failed! " + prop.getProperty("url")+" : " + prop.getProperty("username")+" : " + prop.getProperty("password"));
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
     // type = 0 means get connection from tp url and type =1 means get conneciton from ap url
     public static Connection getConnection(int type){
         Connection conn = null;

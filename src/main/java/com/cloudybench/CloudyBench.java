@@ -54,7 +54,7 @@ public class CloudyBench {
     }
 
     // run TP type workload. Spouse nums of threads defined in conf file.
-    public void runTP(){
+    public void runLagTime(){
         logger.info("Begin TP Workload");
         taskType = 1;
         res.setStartTS(dateFormat.format(new Date()));
@@ -62,7 +62,7 @@ public class CloudyBench {
 
         List<Client> tasks = new ArrayList<Client>();
         if(Integer.parseInt(tpClient) > 0){
-            Client job = Client.initTask(ConfigLoader.prop,"TPClient",taskType);
+            Client job = Client.initTask(ConfigLoader.prop,"CloudLagTime",taskType);
             job.setRet(res);
             job.setVerbose(verbose);
             job.setSqls(sqls);
@@ -100,158 +100,6 @@ public class CloudyBench {
         }
         res.setEndTs(dateFormat.format(new Date()));
         logger.info("TP Workload is done.");
-    }
-
-    public void runAPower(){
-        logger.info("Begin AP Workload");
-        taskType = 2;
-        res.setStartTS(dateFormat.format(new Date()));
-        String apClient = "1";
-        Client job = Client.initTask(ConfigLoader.prop,"APClient",taskType);
-        job.setRet(res);
-        job.setSqls(sqls);
-        job.setVerbose(verbose);
-        ExecutorService es = Executors.newFixedThreadPool(1);
-        Future future = es.submit(new Runnable() {
-            public void run() {
-                // TODO Auto-generated method stub
-                job.startTask();
-            }}
-        );
-
-        if (future != null && !future.isCancelled() && !future.isDone()) {
-            try {
-                future.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!es.isShutdown() || !es.isTerminated()) {
-            es.shutdownNow();
-        }
-        res.setEndTs(dateFormat.format(new Date()));
-        logger.info("AP Workload is done.");
-    }
-
-    public void runAP(){
-        logger.info("Begin AP Workload");
-        taskType = 7;
-        res.setStartTS(dateFormat.format(new Date()));
-        String apClient = ConfigLoader.prop.getProperty("apclient");
-
-        Client job = Client.initTask(ConfigLoader.prop,"APClient",taskType);
-        job.setRet(res);
-        job.setSqls(sqls);
-        job.setVerbose(verbose);
-        ExecutorService es = Executors.newFixedThreadPool(1);
-        Future future = es.submit(new Runnable() {
-            public void run() {
-                // TODO Auto-generated method stub
-                job.startTask();
-            }}
-        );
-
-        if (future != null && !future.isCancelled() && !future.isDone()) {
-            try {
-                future.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!es.isShutdown() || !es.isTerminated()) {
-            es.shutdownNow();
-        }
-        res.setEndTs(dateFormat.format(new Date()));
-        logger.info("AP Workload is done.");
-    }
-
-    public void runXP(int tt){
-        logger.info("Begin XP Workload");
-        taskType = tt;
-        res.setStartTS(dateFormat.format(new Date()));
-        String tpClient = ConfigLoader.prop.getProperty("xtpclient","-1");
-        if(tpClient.equalsIgnoreCase("-1")) {
-            logger.error("Missing configuration xtpclient");
-            System.exit(-1);
-        }
-        String apClient = ConfigLoader.prop.getProperty("xapclient","-1");
-        if(tpClient.equalsIgnoreCase("-1")) {
-            logger.error("Missing configuration xapclient");
-            System.exit(-1);
-        }
-
-        List<Client> tasks = new ArrayList<Client>();
-        if(Integer.parseInt(tpClient) > 0){
-            Client job = Client.initTask(ConfigLoader.prop,"TPClient",taskType);
-            job.setRet(res);
-            job.setVerbose(verbose);
-            job.setSqls(sqls);
-            tasks.add(job);
-        }
-
-        if(Integer.parseInt(apClient) > 0){
-            Client job = Client.initTask(ConfigLoader.prop,"APClient",taskType);
-            job.setRet(res);
-            job.setVerbose(verbose);
-            job.setSqls(sqls);
-            tasks.add(job);
-        }
-
-        ExecutorService es = Executors.newFixedThreadPool(tasks.size());
-        List<Future> future = new ArrayList<Future>();
-        for (final Client j : tasks) {
-            future.add(es.submit(new Runnable() {
-                public void run() {
-                    j.startTask();
-                }})
-            );
-        }
-        Thread freshness = null;
-        if(taskType == 4){
-            final long startTs = System.currentTimeMillis();
-            //System.out.println("Start time is "+Instant.now());
-            //final long startTs = Instant.now().toEpochMilli();
-            final int _duration = Integer.parseInt(ConfigLoader.prop.getProperty("xpRunMins"));
-            final int _fresh_interval = Integer.parseInt(ConfigLoader.prop.getProperty("fresh_interval",String.valueOf(20)));
-            String db = ConfigLoader.prop.getProperty("db");
-            int dbType = Constant.getDbType(db);
-        }
-
-        for(int flength=0;flength < future.size();flength++) {
-            Future f = future.get(flength);
-            if (f != null && !f.isCancelled() && !f.isDone()) {
-                try {
-                    f.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if(freshness != null){
-            freshness.interrupt();
-        }
-
-        if (!es.isShutdown() || !es.isTerminated()) {
-            es.shutdownNow();
-        }
-        res.setEndTs(dateFormat.format(new Date()));
-        logger.info("XP Workload is done");
-    }
-
-    public void runFreshness(int tt){
-
-        logger.info("Begin Freshness Workload");
-        runXP(tt);
-        logger.info("Freshness Workload is done.");
     }
 
     public void runCloudTP(int tenant_num, int[] Conlist){
@@ -337,7 +185,7 @@ public class CloudyBench {
         File file = new File("conf/log4j2.properties");
         context.setConfigLocation(file.toURI());
         ConfigLoader config = new ConfigLoader();
-        CloudyBench hybench = new CloudyBench();
+        CloudyBench bench = new CloudyBench();
         int[][] Con=null;
         logger.info("Hi~ this is CloudyBench");
         int total_test_time = 0;
@@ -361,12 +209,12 @@ public class CloudyBench {
         }
 
         if(argsList.containsKey("s")){
-            hybench.verbose = false;
+            bench.verbose = false;
         }
 
         if(argsList.containsKey("m")){
             String num = argsList.get("m");
-            hybench.TP_tenant_num = Integer.parseInt(num);
+            bench.TP_tenant_num = Integer.parseInt(num);
         }
 
         if(argsList.containsKey("t")){
@@ -389,45 +237,19 @@ public class CloudyBench {
             else if(cmd.startsWith("run")) {
                 String sqlsPath = argsList.get("f");
                 SqlReader sqlStmt = new SqlReader(sqlsPath);
-                hybench.setSqls(sqlStmt.loader());
+                bench.setSqls(sqlStmt.loader());
 
-                if(cmd.equalsIgnoreCase("runxp") ){
-                    type=0;
-                    hybench.runXP(0);
-                }
-                else if(cmd.equalsIgnoreCase("runtp")){
+                if(cmd.equalsIgnoreCase("runLagtime")){
                     type=1;
-                    hybench.runTP();
-                }
-                else if(cmd.equalsIgnoreCase("runap")){
-                    type=7;
-                    hybench.runAP();
-                }
-                else if(cmd.equalsIgnoreCase("runappower")){
-                    type=2;
-                    hybench.runAPower();
-                }
-                else if(cmd.equalsIgnoreCase("runhtap")){
-                    type=3;
-                    hybench.runAP();
-                    hybench.runTP();
-                    hybench.runXP(0);
-                }
-                else if(cmd.equalsIgnoreCase("runFresh")){
-                    type=4;
-                    hybench.runFreshness(4);
-                }
-                else if(cmd.equalsIgnoreCase("runAll")){
-                    type=6;
-                    hybench.runAP();
-                    hybench.runTP();
-                    hybench.runFreshness(4);
+                    bench.runLagTime();
+                    //bench.res.setlagtime();
+                    bench.getRes().printResult(type);
                 }
                 else if(cmd.equalsIgnoreCase("runCloudTP")){
                     type=8;
 
                     // Workload Pattern Generation
-                    Con= new int[total_test_time][hybench.TP_tenant_num];
+                    Con= new int[total_test_time][bench.TP_tenant_num];
 
                     // the concurrency in the first minute
                     Con[0][0]=5;
@@ -435,22 +257,22 @@ public class CloudyBench {
 
 
                     // the concurrency in the second minute
-                    Con[1][0]=5;
-                    //Con[1][1]=5;
+                    //Con[1][0]=5; //tenant 0
+                    //Con[1][1]=5; // tenant 1
 
 
                     // the concurrency in the third minute
-                    Con[2][0]=5;
+                    //Con[2][0]=5;
                     //Con[2][1]=5;
 
 
                     for (int i = 1; i <= total_test_time; i++) {
                         logger.info("This is the "+i+"-th time slot...");
-                        hybench.runCloudTP(hybench.TP_tenant_num, Con[i-1]);
+                        bench.runCloudTP(bench.TP_tenant_num, Con[i-1]);
                         // if( hybench.getRes().getTpsList() != null && Con[i - 1][0] > 0)
-                        for (int j = 0; j < hybench.TP_tenant_num; j++) {
+                        for (int j = 0; j < bench.TP_tenant_num; j++) {
                             if (Con[i - 1][j] != 0) {
-                                hybench.getRes().printResult(type);
+                                bench.getRes().printResult(type);
                                 break;
                             }
                         }
