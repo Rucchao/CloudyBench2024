@@ -252,7 +252,7 @@ public class CloudyBench {
                     Con= new int[total_test_time][bench.TP_tenant_num];
 
                     // the concurrency in the first minute
-                    Con[0][0]=5;
+                    Con[0][0]=1;
                     //Con[0][1]=5;
 
 

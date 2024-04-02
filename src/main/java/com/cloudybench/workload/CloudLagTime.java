@@ -66,8 +66,8 @@ public class CloudLagTime extends Client {
             long currentStarttTs = System.currentTimeMillis();
             // transaction begins
             conn.setAutoCommit(false);
-
-            pstmt = conn.prepareStatement(sqls.tp_txn1());
+            String[] statements=sqls.tp_txn1();
+            pstmt = conn.prepareStatement(statements[0]);
             pstmt.setInt(1, o_id);
             pstmt.setInt(2, p_id);
             pstmt.setInt(3, OL_QUANTITY);
@@ -75,20 +75,18 @@ public class CloudLagTime extends Client {
             pstmt.setTimestamp(5, ts);
             pstmt.executeUpdate();
 
-            String sql="select max(ol_id) from orderline;";
-            pstmt=conn.prepareStatement(sql);
+            pstmt=conn.prepareStatement(statements[1]);
             ResultSet rs = pstmt.executeQuery();
             int newid=0;
             if (rs.next())
                 newid = rs.getInt(1);
-            // logger.info("The new id is "+newid);
+            //logger.info("The new id is "+newid);
             rs.close();
             pstmt.close();
             conn.commit();
 
             // get the data from the replica
-            String sql2="select ol_id from orderline where ol_id=?";
-            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica = conn_replica.prepareStatement(statements[2]);
             pstmt_replica.setInt(1,newid);
 
             // count the lag time
@@ -103,7 +101,7 @@ public class CloudLagTime extends Client {
             long lagStartTs = System.currentTimeMillis();
 
             while (replicaid==0){
-                logger.info("the replica data is stale!");
+                logger.info("[Insert]: the replica data is stale!");
                 Islag=true;
                 rs2 = pstmt_replica.executeQuery();// get the fresh record
                 if (rs2.next())
@@ -194,8 +192,7 @@ public class CloudLagTime extends Client {
             conn.commit();
 
             // get the data from the replica
-            String sql2="select O_UPDATEDDATE from orders where o_id=?";
-            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica = conn_replica.prepareStatement(statements[3]);
             pstmt_replica.setInt(1, O_ID);
 
             // count the lag time
@@ -210,7 +207,7 @@ public class CloudLagTime extends Client {
             long lagStartTs = System.currentTimeMillis();
 
             while (!fresh_ts.equals(new_ts)){
-                logger.info("the replica data is stale!");
+                logger.info("[Update]: the replica data is stale!");
                 Islag=true;
                 rs2 = pstmt_replica.executeQuery();// get the fresh record
                 if (rs2.next())
@@ -284,8 +281,7 @@ public class CloudLagTime extends Client {
             conn.commit();
 
             // get the data from the replica
-            String sql2="select OL_ID from orderline where ol_id=?";
-            pstmt_replica = conn_replica.prepareStatement(sql2);
+            pstmt_replica = conn_replica.prepareStatement(statements[2]);
             pstmt_replica.setInt(1, OL_ID);
 
             // count the lag time
@@ -296,7 +292,7 @@ public class CloudLagTime extends Client {
             long lagStartTs = System.currentTimeMillis();
 
             while (rs2.next()){
-                logger.info("the replica data is stale!");
+                logger.info("[Delete]: the replica data is stale!");
                 Islag=true;
                 rs2 = pstmt_replica.executeQuery();// get the fresh record
             }
@@ -314,7 +310,7 @@ public class CloudLagTime extends Client {
 
             long currentEndTs = System.currentTimeMillis();
             responseTime = currentEndTs - currentStarttTs;
-            hist.getTPItem(1).addValue(responseTime);
+            hist.getTPItem(2).addValue(responseTime);
             lock.lock();
             tpTotalCount++;
             lock.unlock();

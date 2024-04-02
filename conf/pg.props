@@ -3,31 +3,30 @@ sf=1x
 db=postgreSQL
 classname=org.postgresql.Driver
 
-
 username=postgres
-password=postgres
+password=8TOcWafgVhd6
 verbose=false
 
-url=jdbc:postgresql://localhost:5432/cloudybench_sf1x
-tpclient=1
+url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+tpclient=1000
 tpRunMins=1
 t1_percent=80
 t2_percent=10
 t3_percent=10
 
-url_replica=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+url_replica=jdbc:postgresql://ep-spring-union-a1pu10qi-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 classname_replica=org.postgresql.Driver
 username_replica=postgres
-password_replica=postgres
+password_replica=8TOcWafgVhd6
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=2
 
-url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+url_1=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 username_1=postgres
-password_1=postgres
-apclient_1=1000
-tpclient_1=1000
+password_1=8TOcWafgVhd6
+apclient_1=1
+tpclient_1=1
 
 url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 username_2=postgres
@@ -47,8 +46,6 @@ t3_percent_2=0
 
 
 fresh_interval=20
-
-
 
 dist=uniform
 power_alpha=0.1

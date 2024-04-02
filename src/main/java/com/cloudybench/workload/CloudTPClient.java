@@ -66,7 +66,7 @@ public class CloudTPClient extends Client {
             // transaction begins
             conn.setAutoCommit(false);
 
-            pstmt = conn.prepareStatement(sqls.tp_txn1());
+            pstmt = conn.prepareStatement(sqls.tp_txn1()[0]);
             pstmt.setInt(1, o_id);
             pstmt.setInt(2, p_id);
             pstmt.setInt(3, OL_QUANTITY);
