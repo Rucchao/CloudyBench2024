@@ -53,7 +53,7 @@ public class CloudyBench {
         return sqls;
     }
 
-    // run TP type workload. Spouse nums of threads defined in conf file.
+    // Measure lag time between primary and replica
     public void runLagTime(){
         logger.info("Begin TP Workload");
         taskType = 1;
@@ -102,6 +102,56 @@ public class CloudyBench {
         logger.info("TP Workload is done.");
     }
 
+    // Measure read-write throughput between primary and replica
+    public void runReplica(){
+        logger.info("Begin TP Workload");
+        taskType = 2;
+        res.setStartTS(dateFormat.format(new Date()));
+        String tpClient = ConfigLoader.prop.getProperty("tpclient");
+
+        List<Client> tasks = new ArrayList<Client>();
+        if(Integer.parseInt(tpClient) > 0){
+            Client job = Client.initTask(ConfigLoader.prop,"CloudReplica",taskType);
+            job.setRet(res);
+            job.setVerbose(verbose);
+            job.setSqls(sqls);
+            tasks.add(job);
+        }
+        else {
+            logger.warn("There is no an available tp client");
+            return;
+        }
+        ExecutorService es = Executors.newFixedThreadPool(tasks.size());
+        List<Future> future = new ArrayList<Future>();
+        for (final Client j : tasks) {
+            future.add( es.submit(new Runnable() {
+                        public void run() {
+                            j.startTask();
+                        }
+                    })
+            );
+        }
+        for(int flength=0;flength < future.size();flength++) {
+            Future f = future.get(flength);
+            if (f != null && !f.isCancelled() && !f.isDone()) {
+                try {
+                    f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (!es.isShutdown() || !es.isTerminated()) {
+            es.shutdownNow();
+        }
+        res.setEndTs(dateFormat.format(new Date()));
+        logger.info("TP Workload is done.");
+    }
+
+    // run TP type workload. Spouse nums of threads defined in conf file.
     public void runCloudTP(int tenant_num, int[] Conlist){
         logger.info("Begin Cloud TP Workload");
         taskType = 8;
@@ -281,6 +331,12 @@ public class CloudyBench {
                     }
                 }
 
+                else if(cmd.equalsIgnoreCase("runReplica")) {
+                    type = 2;
+                    bench.runReplica();
+                    //bench.res.setlagtime();
+                    bench.getRes().printResult(type);
+                }
                 else{
                     logger.error("Run task not found : " + cmd);
                     cmdProcessor.printHelp();

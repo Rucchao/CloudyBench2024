@@ -183,6 +183,10 @@ public abstract class Client {
             lagtime= new ArrayList<Long>();
         }
 
+        else if(taskType == 2){
+            threads = intParameter("tpclient");
+        }
+
         else if(taskType == 8){
             threads = concurrency;
             tpTotalList=new int[tenant_num];
@@ -270,6 +274,11 @@ public abstract class Client {
                 ret.setTpclient(threads);
         }
 
+        if(clientName.equalsIgnoreCase("CloudReplica")){
+            if(taskType == 2)
+                ret.setTpclient(threads);
+        }
+
         if(clientName.equalsIgnoreCase("CloudTPClient"+tenant_num)){
             if(taskType == 8)
                 ret.setTpclient(threads);
@@ -284,19 +293,15 @@ public abstract class Client {
         if (taskType == 7|| taskType == 9){
             testTime = intParameter("apRunMins");
         }
-        else if (taskType == 1 || taskType == 8){
+        else if (taskType == 1 || taskType == 8 || taskType == 2){
             testTime = intParameter("tpRunMins");
         }
         else if(taskType == 0 || taskType == 4){
             testTime = intParameter("xpRunMins");
         }
         final int _duration = testTime;
-        if(taskType == 2) {
-            logger.info("Begin to run :" + clientName + ", Test is " + round + " round");
-        }
-        else{
-            logger.info("Begin to run :" + clientName + ", Test Duration is "  + _duration + " mins");
-        }
+
+        logger.info("Begin to run :" + clientName + ", Test Duration is "  + _duration + " mins");
 
         setTestTime(testTime);
 
@@ -311,7 +316,7 @@ public abstract class Client {
                             elpased_time += _duration * 60 * 100L;
 
                             if(verbose){
-                                if(clientName.equalsIgnoreCase("CloudLagTime")) {
+                                if(clientName.equalsIgnoreCase("CloudLagTime") || clientName.equalsIgnoreCase("CloudReplica") ) {
                                     for(int tpidx = 0;tpidx < 4;tpidx++) {
                                         if(hist.getTPItem(tpidx).getN() == 0)
                                             continue;
@@ -407,6 +412,13 @@ public abstract class Client {
             if (taskType == 1) {
                 ret.setTpTotal(tpTotalCount);
                 ret.setlagList(lagtime);
+                ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+            }
+        }
+
+        if(clientName.equalsIgnoreCase("CloudReplica")) {
+            if (taskType == 2) {
+                ret.setTpTotal(tpTotalCount);
                 ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
             }
         }

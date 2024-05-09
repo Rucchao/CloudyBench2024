@@ -1,23 +1,32 @@
 sf=1x
 
 db=postgreSQL
-classname=org.postgresql.Driver
-
-username=postgres
-password=8TOcWafgVhd6
 verbose=false
 
-url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-tpclient=1000
-tpRunMins=1
-t1_percent=80
-t2_percent=10
-t3_percent=10
+## support cloud database benchmarking for transaction processing
 
-url_replica=jdbc:postgresql://ep-spring-union-a1pu10qi-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+#url=jdbc:postgresql://localhost:5433/hy_sf1x
+classname=org.postgresql.Driver
+username=cycchao6535
+password=4HrcGV8IPhZd
+
+url_replica=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 classname_replica=org.postgresql.Driver
-username_replica=postgres
-password_replica=8TOcWafgVhd6
+username_replica=cycchao6535
+password_replica=4HrcGV8IPhZd
+
+tpclient=10
+tpRunMins=1
+t1_percent=0
+t2_percent=50
+t3_percent=50
+
+rcu_c=92.9
+rcu_m=5.4
+
+cpu_num=4
+mem_num=16
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=2
@@ -31,8 +40,8 @@ tpclient_1=1
 url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 username_2=postgres
 password_2=postgres
-apclient_2=1000
-tpclient_2=1000
+apclient_2=1
+tpclient_2=1
 
 testTime=1
 
@@ -47,7 +56,8 @@ t3_percent_2=0
 
 fresh_interval=20
 
-dist=uniform
-power_alpha=0.1
+dist=latest
+
+contention_num=10
 
 apround=1

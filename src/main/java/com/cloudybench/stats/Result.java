@@ -221,6 +221,11 @@ public class Result {
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
                 logger.info("TPS is " + getTps());
                 break;
+            case 2:
+                logger.info("TP Concurrency is " + getTpclient());
+                logger.info("Total amount of TP Transaction is " + getTpTotal());
+                logger.info("TPS is " + getTps());
+                break;
         }
         logger.info("Query/Transaction response time(ms) histogram : ");
 
@@ -238,6 +243,19 @@ public class Result {
 
             logger.info("-----------Avg-Lag-Time--------------------");
             logger.info("Lag Time (ms) : "+ getLagtime() * 1.0);
+        }
+
+        if(type == 2) {
+            System.out.println("------------TP-------------------");
+            for (int tpidx = 0; tpidx < 3; tpidx++) {
+                System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
+                        (tpidx + 1),
+                        hist.getTPItem(tpidx).getMax(),
+                        hist.getTPItem(tpidx).getMin(),
+                        hist.getTPItem(tpidx).getMean(),
+                        hist.getTPItem(tpidx).getPercentile(95),
+                        hist.getTPItem(tpidx).getPercentile(99));
+            }
         }
 
         if(type==8){
