@@ -56,7 +56,7 @@ t3_percent_2=0
 
 fresh_interval=20
 
-dist=latest
+dist=uniform
 
 contention_num=10
 
