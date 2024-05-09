@@ -231,7 +231,8 @@ public class Result {
 
         if(type == 1) {
             System.out.println("------------TP-------------------");
-            for (int tpidx = 0; tpidx < 3; tpidx++) {
+            for (int tpidx = 0; tpidx < 4; tpidx++) {
+                if(tpidx==2) continue;
                 System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
                         (tpidx + 1),
                         hist.getTPItem(tpidx).getMax(),

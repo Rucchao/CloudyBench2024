@@ -8,6 +8,7 @@ package com.cloudybench.workload;
  *   TP Client Processor,include 6 TP transactions
  **/
 
+import com.cloudybench.ConfigLoader;
 import com.cloudybench.dbconn.ConnectionMgr;
 import com.cloudybench.load.DateUtility;
 
@@ -16,22 +17,24 @@ import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CloudLagTime extends Client {
-    int tp1_percent = 15;
-    int tp2_percent = 5;
-    int tp3_percent = 80;
+    int tp1_percent_lag = 80;
+    int tp2_percent_lag = 15;
+    int tp4_percent_lag = 5;
 
     //   RandomGenerator rg = new RandomGenerator();
     int customer_id = 0;
     int order_id = 0;
     int product_id = 0;
+    int orderline_id = 0;
+    double fresh_rate=0;
     // set init parameter before run
     @Override
     public void doInit() {
-        tp1_percent = intParameter("t1_percent",15);
-        tp2_percent = intParameter("t2_percent",5);
-        tp3_percent = intParameter("t3_percent",80);
+        tp1_percent_lag = intParameter("t1_percent_lag",80);
+        tp2_percent_lag = intParameter("t2_percent_lag",15);
+        tp4_percent_lag = intParameter("t4_percent_lag",5);
 
-        if( (tp1_percent + tp2_percent + tp3_percent) != 100 ){
+        if( (tp1_percent_lag + tp2_percent_lag + tp4_percent_lag) != 100 ){
             logger.error("TP analytical transaction percentage is not equal 100");
             System.exit(-1);
         }
@@ -44,6 +47,10 @@ public class CloudLagTime extends Client {
 
         Long productnumer = CR.sales_product_number;
         product_id = productnumer.intValue() + 1;
+
+        orderline_id = order_id*10;
+
+        fresh_rate=Double.parseDouble(ConfigLoader.prop.getProperty("fresh_rate","0.5"));
     }
 
     // 3 Transactions
@@ -78,6 +85,7 @@ public class CloudLagTime extends Client {
             pstmt=conn.prepareStatement(statements[1]);
             ResultSet rs = pstmt.executeQuery();
             int newid=0;
+            int targetid=0;
             if (rs.next())
                 newid = rs.getInt(1);
             //logger.info("The new id is "+newid);
@@ -87,6 +95,14 @@ public class CloudLagTime extends Client {
 
             // get the data from the replica
             pstmt_replica = conn_replica.prepareStatement(statements[2]);
+
+//            // tuning the orderline id with fresh_rate
+//            double rand = rg.getRandomDouble();
+//            if(rand<fresh_rate){
+//                targetid=newid;
+//            }
+//            else
+//                targetid = rg.getRandomint(1,orderline_id);
             pstmt_replica.setInt(1,newid);
 
             // count the lag time
@@ -153,16 +169,19 @@ public class CloudLagTime extends Client {
         java.sql.Timestamp ts = null;
         try {
             long currentStarttTs = System.currentTimeMillis();
-            int O_ID = 0;
+            int O_ID = rg.getRandomint(1, order_id);
             int O_C_ID = 0;
             double O_TOTALAMOUNT = 0;
             String[] statements = sqls.tp_txn2();
             pstmt[0] = conn.prepareStatement(statements[0]);
             pstmt[1] = conn.prepareStatement(statements[1]);
             pstmt[2] = conn.prepareStatement(statements[2]);
+
             // transaction begins
             conn.setAutoCommit(false);
             // get order info
+
+            pstmt[0].setInt(1,O_ID);
             rs = pstmt[0].executeQuery();
             if (rs.next()) {
                 O_ID = rs.getInt(1);
@@ -177,18 +196,19 @@ public class CloudLagTime extends Client {
             Timestamp new_ts = new Timestamp(new_date.getTime());
            // logger.info("The primary ts is "+ new_ts);
 
-            // update customer's credit
-            pstmt[1].setDouble(1, O_TOTALAMOUNT);
-            pstmt[1].setTimestamp(2, new_ts);
-            pstmt[1].setInt(3, O_C_ID);
+            // update order's updateddate
+            pstmt[1].setTimestamp(1, new_ts);
+            pstmt[1].setInt(2, O_ID);
             pstmt[1].executeUpdate();
             pstmt[1].close();
 
-            // update order's updateddate
-            pstmt[2].setTimestamp(1, new_ts);
-            pstmt[2].setInt(2, O_ID);
+            // update customer's credit
+            pstmt[2].setDouble(1, O_TOTALAMOUNT);
+            pstmt[2].setTimestamp(2, new_ts);
+            pstmt[2].setInt(3, O_C_ID);
             pstmt[2].executeUpdate();
             pstmt[2].close();
+
             conn.commit();
 
             // get the data from the replica
@@ -310,7 +330,7 @@ public class CloudLagTime extends Client {
 
             long currentEndTs = System.currentTimeMillis();
             responseTime = currentEndTs - currentStarttTs;
-            hist.getTPItem(2).addValue(responseTime);
+            hist.getTPItem(3).addValue(responseTime);
             lock.lock();
             tpTotalCount++;
             lock.unlock();
@@ -348,13 +368,13 @@ public class CloudLagTime extends Client {
                 while(!exitFlag) {
                     // cr = execTxn1(conn);
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
-                    if(rand < tp1_percent){
+                    if(rand < tp1_percent_lag){
                         cr = execTxn1(conn, conn_replica);
                     }
-                    else if(rand < tp1_percent + tp2_percent){
+                    else if(rand < tp1_percent_lag + tp2_percent_lag){
                         cr = execTxn2(conn,conn_replica);
                     }
-                    else if(rand < tp1_percent + tp2_percent + tp3_percent){
+                    else if(rand < tp1_percent_lag + tp2_percent_lag + tp4_percent_lag){
                         cr = execTxn4(conn,conn_replica);
                     }
                     totalElapsedTime += cr.getRt();

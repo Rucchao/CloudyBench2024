@@ -18,15 +18,22 @@ password_replica=4HrcGV8IPhZd
 
 tpclient=10
 tpRunMins=1
+
 t1_percent=0
 t2_percent=50
 t3_percent=50
+
+t1_percent_lag=80
+t2_percent_lag=15
+t4_percent_lag=5
+fresh_rate=0.5
 
 rcu_c=92.9
 rcu_m=5.4
 
 cpu_num=4
 mem_num=16
+node_num=1
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=2
