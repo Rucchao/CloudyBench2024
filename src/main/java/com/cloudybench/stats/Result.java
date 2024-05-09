@@ -251,6 +251,8 @@ public class Result {
 
             logger.info("-----------Avg-Lag-Time--------------------");
             logger.info("Lag Time (ms) : "+ getLagtime() * 1.0);
+            System.out.println("-----------C-Score--------------------");
+            System.out.printf("C-Score : %10.2f \n", (getLagtime() / node_num)  * 1.0);
         }
 
         if(type == 2) {
