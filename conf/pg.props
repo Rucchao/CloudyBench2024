@@ -5,18 +5,25 @@ verbose=false
 
 ## support cloud database benchmarking for transaction processing
 
-url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-#url=jdbc:postgresql://localhost:5433/hy_sf1x
+## neon config
+#url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+#url_replica=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+#username=cycchao6535
+#password=4HrcGV8IPhZd
+
+## local config
+url=jdbc:postgresql://localhost:5433/hy_sf1x
+url_replica=jdbc:postgresql://localhost:5433/hy_sf1x
+
 classname=org.postgresql.Driver
-username=cycchao6535
-password=4HrcGV8IPhZd
+username=postgres
+password=postgres
 
-url_replica=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 classname_replica=org.postgresql.Driver
-username_replica=cycchao6535
-password_replica=4HrcGV8IPhZd
+username_replica=postgres
+password_replica=postgres
 
-tpclient=10
+tpclient=1
 tpRunMins=1
 
 t1_percent=0

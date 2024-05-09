@@ -1,5 +1,6 @@
 package com.cloudybench.stats;
 
+import com.cloudybench.ConfigLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -215,6 +216,12 @@ public class Result {
         logger.info("====================Test Summary========================");
         logger.info("Test starts at " + getStartTS());
         logger.info("Test ends at " + getEndTs());
+        Double rcu_c = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_c","1"));
+        Double rcu_m = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_m","1"));
+        int cpu_num = Integer.parseInt(ConfigLoader.prop.getProperty("cpu_num","1"));
+        int mem_num = Integer.parseInt(ConfigLoader.prop.getProperty("mem_num","1"));
+        int node_num = Integer.parseInt(ConfigLoader.prop.getProperty("node_num","1"));
+
         switch(type){
             case 1:
                 logger.info("TP Concurrency is " + getTpclient());
@@ -257,6 +264,8 @@ public class Result {
                         hist.getTPItem(tpidx).getPercentile(95),
                         hist.getTPItem(tpidx).getPercentile(99));
             }
+            System.out.println("-----------P-Score--------------------");
+            System.out.printf("P-Score : %10.2f \n", (getTps() / (rcu_c*cpu_num+rcu_m*mem_num)*node_num)  * 1.0);
         }
 
         if(type==8){
