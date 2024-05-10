@@ -242,7 +242,7 @@ public class CloudReplica extends Client {
 
         // get the primary and replica url
         Connection conn = ConnectionMgr.getConnection();
-        Connection conn_replica = ConnectionMgr.getReplicaConnection();
+        Connection conn_replica = null;
         long totalElapsedTime = 0L;
         try {
             if(type == 2){
@@ -255,6 +255,8 @@ public class CloudReplica extends Client {
                         cr = execTxn2(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
+                        // get a random replica connection
+                        conn_replica = ConnectionMgr.getReplicaConnection();
                         cr = execTxn3(conn_replica);
                     }
                     totalElapsedTime += cr.getRt();

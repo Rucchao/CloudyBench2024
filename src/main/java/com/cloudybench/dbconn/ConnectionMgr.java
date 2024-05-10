@@ -9,6 +9,7 @@ package com.cloudybench.dbconn;
  **/
 
 import com.cloudybench.ConfigLoader;
+import com.cloudybench.util.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.FileInputStream;
@@ -18,6 +19,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ConnectionMgr {
    static Logger logger = LogManager.getLogger(ConnectionMgr.class);
@@ -77,10 +79,33 @@ public class ConnectionMgr {
         try {
             Class.forName(prop.getProperty("classname_replica"));
             //DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
-            conn = DriverManager.getConnection(
-                    prop.getProperty("url_replica"),
-                    prop.getProperty("username_replica"),
-                    prop.getProperty("password_replica"));
+
+            // get a random replica url
+            //double rand = rg.getRandomDouble();
+            int rand = ThreadLocalRandom.current().nextInt(1, 100);
+            if(rand<40){
+                conn = DriverManager.getConnection(
+                        prop.getProperty("url_replica_1"),
+                        prop.getProperty("username_replica"),
+                        prop.getProperty("password_replica"));
+               // System.out.println("The replica url is url_replica_1!");
+
+            }
+            else if(rand<70){
+                conn = DriverManager.getConnection(
+                        prop.getProperty("url_replica_2"),
+                        prop.getProperty("username_replica"),
+                        prop.getProperty("password_replica"));
+               // System.out.println("The replica url is url_replica_2!");
+            }
+            else if (rand<100){
+                conn = DriverManager.getConnection(
+                        prop.getProperty("url_replica_3"),
+                        prop.getProperty("username_replica"),
+                        prop.getProperty("password_replica"));
+              //  System.out.println("The replica url is url_replica_3!");
+            }
+
             conn.setAutoCommit(false);
         } catch (SQLException e) {
             // TODO Auto-generated catch block

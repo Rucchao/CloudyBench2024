@@ -6,24 +6,28 @@ verbose=false
 ## support cloud database benchmarking for transaction processing
 
 ## neon config
-#url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-#url_replica=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-#username=cycchao6535
-#password=4HrcGV8IPhZd
+url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 
-## local config
-url=jdbc:postgresql://localhost:5433/hy_sf1x
-url_replica=jdbc:postgresql://localhost:5433/hy_sf1x
+url_replica_1=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica_2=jdbc:postgresql://ep-shy-dream-a1gfwesu-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica_3=jdbc:postgresql://ep-weathered-violet-a1w5k9t3-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 
 classname=org.postgresql.Driver
-username=postgres
-password=postgres
-
+username=cycchao6535
+password=4HrcGV8IPhZd
 classname_replica=org.postgresql.Driver
-username_replica=postgres
-password_replica=postgres
+username_replica=cycchao6535
+password_replica=4HrcGV8IPhZd
 
-tpclient=1
+## local config
+<!-- url=jdbc:postgresql://localhost:5433/hy_sf1x -->
+<!-- url_replica=jdbc:postgresql://localhost:5433/hy_sf1x -->
+<!-- username=postgres -->
+<!-- password=postgres -->
+<!-- username_replica=postgres -->
+<!-- password_replica=postgres -->
+
+tpclient=10
 tpRunMins=1
 
 t1_percent=0
@@ -70,8 +74,8 @@ t3_percent_2=0
 
 fresh_interval=20
 
-dist=uniform
+dist=latest
 
-contention_num=10
+contention_num=11
 
 apround=1
