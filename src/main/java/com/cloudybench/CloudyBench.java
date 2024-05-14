@@ -106,9 +106,8 @@ public class CloudyBench {
     }
 
     // Measure read-write throughput between primary and replica
-    public void runReplica(){
+    public void runReplica(int taskType){
         logger.info("Begin TP Workload");
-        taskType = 2;
         res.setStartTS(dateFormat.format(new Date()));
         String tpClient = ConfigLoader.prop.getProperty("tpclient");
 
@@ -305,7 +304,8 @@ public class CloudyBench {
                     //bench.res.setlagtime();
                     bench.getRes().printResult(type);
                 }
-                else if(cmd.equalsIgnoreCase("runCloudTP")){
+
+                else if(cmd.equalsIgnoreCase("runElastic")){
                     type=8;
 
                     // Workload Pattern Generation
@@ -360,23 +360,37 @@ public class CloudyBench {
                         double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
                         int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
                         double resource_cost=cpus * rcu_c+cpus * rcu_m * cpu_mem_ratio;
-                        System.out.println("-----------E-Score--------------------");
+                        System.out.println("-----------E1-Score--------------------");
                         System.out.printf("The E1-Score is   : %10.2f \n", (avg_tps/resource_cost)  * 1.0);
                     }
                 }
 
                 else if(cmd.equalsIgnoreCase("runReplica")) {
                     type = 2;
-                    bench.runReplica();
+                    bench.runReplica(type);
                     //bench.res.setlagtime();
                     bench.getRes().printResult(type);
                 }
 
                 else if(cmd.equalsIgnoreCase("runScaling")) {
                     type = 3;
-                    bench.runReplica();
-                    //bench.res.setlagtime();
-                    bench.getRes().printResult(type);
+                    System.out.println("====================The RW is running========================");
+                    bench.runReplica(type);
+                    System.out.println("====================The RW and RO are running========================");
+                    bench.runReplica(2);
+
+                    Result res= bench.getRes();
+
+                    System.out.println("====================Scaling Summary========================");
+
+                    int replica_num=Integer.parseInt(config.prop.getProperty("node_num","1"));
+
+                    System.out.printf("The RW average tps is  : %10.2f \n", res.getTps_rw()  * 1.0);
+
+                    System.out.printf("The RW-RO average tps is  : %10.2f \n", res.getTps()  * 1.0);
+
+                    System.out.println("-----------E2-Score--------------------");
+                    System.out.printf("The E2-Score is   : %10.2f \n", (res.getTps()/(res.getTps_rw()*replica_num))  * 1.0);
                 }
 
                 else{

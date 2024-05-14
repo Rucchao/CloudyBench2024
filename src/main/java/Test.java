@@ -107,14 +107,20 @@ public class Test {
                 // 3.1 run the elastic workload
                 // 3.2 collect the execution time
                 // 3.3 compute the E1-Score
+//            NeonMetric neon = new NeonMetric();
+//
+//            String json=neon.metricJson("2024-05-13 19:48:36");
+//            String url="https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats";
+//
+//            double cpus = neon.doPostRequest(url,json);
+//            System.out.println("your consumed cpus is "+cpus);
 
-            NeonMetric neon = new NeonMetric();
+            // compute the E2-score
+                // 1. run a RW test (TPS)
 
-            String json=neon.metricJson("2024-05-13 19:48:36");
-            String url="https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats";
+                // 2. add/remove a replica and run a RO test (TPS')
 
-            double cpus = neon.doPostRequest(url,json);
-            System.out.println("your consumed cpus is "+cpus);
+                // 3. run a RO test (TPS'')
 
     }
 }

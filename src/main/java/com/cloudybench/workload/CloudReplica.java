@@ -265,6 +265,27 @@ public class CloudReplica extends Client {
                 }
                 ret.setRt(totalElapsedTime);
             }
+            if(type == 3){
+                while(!exitFlag) {
+                    int rand = ThreadLocalRandom.current().nextInt(1, 100);
+                    if(rand < tp1_percent){
+                        cr = execTxn1(conn);
+                    }
+                    else if(rand < tp1_percent + tp2_percent){
+                        cr = execTxn2(conn);
+                    }
+                    else if(rand < tp1_percent + tp2_percent + tp3_percent){
+                        // get a random replica connection
+
+                        cr = execTxn3(conn);
+                    }
+                    totalElapsedTime += cr.getRt();
+                    if(exitFlag)
+                        break;
+                }
+                ret.setRt(totalElapsedTime);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }finally {

@@ -26,6 +26,8 @@ public class Result {
     private long tpTotal;
     private long apTotal;
     private double tps;
+    private double tps_rw;
+    private double tps_ro;
     private double qps;
     private String startTS ;
     private String endTs;
@@ -98,6 +100,22 @@ public class Result {
 
     public void setTps(double tps) {
         this.tps = tps;
+    }
+
+    public void setTps_rw(double tps) {
+        this.tps_rw = tps;
+    }
+
+    public void setTps_ro(double tps) {
+        this.tps_ro = tps;
+    }
+
+    public double getTps_rw(){
+        return this.tps_rw;
+    }
+
+    public double getTps_ro(){
+        return this.tps_ro;
     }
 
     public void setTpTotal(long tpTotal) {
@@ -234,6 +252,12 @@ public class Result {
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
                 logger.info("TPS is " + getTps());
                 break;
+
+            case 3:
+                logger.info("TP Concurrency is " + getTpclient());
+                logger.info("Total amount of TP Transaction is " + getTpTotal());
+                logger.info("TPS is " + getTps_rw());
+                break;
         }
         logger.info("Query/Transaction response time(ms) histogram : ");
 
@@ -269,6 +293,19 @@ public class Result {
             }
             System.out.println("-----------P-Score--------------------");
             System.out.printf("P-Score : %10.2f \n", (getTps() / (rcu_c*cpu_num+rcu_m*mem_num)*node_num)  * 1.0);
+        }
+
+        if(type == 3) {
+            System.out.println("------------TP-------------------");
+            for (int tpidx = 0; tpidx < 3; tpidx++) {
+                System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
+                        (tpidx + 1),
+                        hist.getTPItem(tpidx).getMax(),
+                        hist.getTPItem(tpidx).getMin(),
+                        hist.getTPItem(tpidx).getMean(),
+                        hist.getTPItem(tpidx).getPercentile(95),
+                        hist.getTPItem(tpidx).getPercentile(99));
+            }
         }
 
         if(type==8){

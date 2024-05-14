@@ -9,27 +9,28 @@ classname_replica=org.postgresql.Driver
 ## support cloud database benchmarking for transaction processing
 
 ## neon config
-
-<!-- url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require -->
-<!-- url_replica=jdbc:postgresql://ep-sweet-block-a171o762-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require -->
-<!-- username=cycchao6535 -->
-<!-- password=4HrcGV8IPhZd -->
-<!-- username_replica=cycchao6535 -->
-<!-- password_replica=4HrcGV8IPhZd -->
+url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica=jdbc:postgresql://ep-rapid-violet-a1gi6zys-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+username=cycchao6535
+password=4HrcGV8IPhZd
+username_replica=cycchao6535
+password_replica=4HrcGV8IPhZd
 
 ## local config
-url=jdbc:postgresql://localhost:5433/hy_sf1x
-url_replica=jdbc:postgresql://localhost:5433/hy_sf1x
-username=postgres
-password=postgres
-username_replica=postgres
-password_replica=postgres
+<!-- url=jdbc:postgresql://localhost:5433/hy_sf1x -->
+<!-- url_replica=jdbc:postgresql://localhost:5433/hy_sf1x -->
+<!-- username=postgres -->
+<!-- password=postgres -->
+<!-- username_replica=postgres -->
+<!-- password_replica=postgres -->
 
-tpclient=1
+tpclient=10
 tpRunMins=1
-t1_percent=0
-t2_percent=50
-t3_percent=50
+
+t1_percent=5
+t2_percent=15
+t3_percent=80
+
 t1_percent_lag=80
 t2_percent_lag=15
 t4_percent_lag=5

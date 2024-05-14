@@ -172,18 +172,12 @@ public abstract class Client {
     }
     // get data size and create thread pool according to client number
     public void doInit_wrapper(String clientName, int concurrency) {
-        if(taskType == 0 ) {
-            threads = intParameter("xtpclient");
-        }
-        else if (taskType == 4){
-            threads = intParameter("xtpclient") + 1;
-        }
-        else if(taskType == 1){
+        if(taskType == 1){
             threads = intParameter("tpclient");
             lagtime= new ArrayList<Long>();
         }
 
-        else if(taskType == 2){
+        else if(taskType == 2 || taskType == 3){
             threads = intParameter("tpclient");
         }
 
@@ -191,12 +185,6 @@ public abstract class Client {
             threads = concurrency;
             tpTotalList=new int[tenant_num];
             tpsList=new double[num];
-        }
-
-        else if(taskType == 9){
-            threads = intParameter("apclient_"+tenant_num);
-            apTotalList=new int[tenant_num];
-            apsList=new double[tenant_num];
         }
 
         CR = new ConfigReader("cloudybench");
@@ -269,36 +257,11 @@ public abstract class Client {
             hist = ret.getHist();
         }
 
-        if(clientName.equalsIgnoreCase("CloudLagTime")){
-            if(taskType == 1)
-                ret.setTpclient(threads);
-        }
-
-        if(clientName.equalsIgnoreCase("CloudReplica")){
-            if(taskType == 2)
-                ret.setTpclient(threads);
-        }
-
-        if(clientName.equalsIgnoreCase("CloudTPClient"+tenant_num)){
-            if(taskType == 8)
-                ret.setTpclient(threads);
-        }
-
-        if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)){
-            ret.setApclient(threads);
-        }
-
-        round = intParameter("apround",1);
-
-        if (taskType == 7|| taskType == 9){
-            testTime = intParameter("apRunMins");
-        }
-        else if (taskType == 1 || taskType == 8 || taskType == 2){
+         if (taskType == 1 || taskType == 8 || taskType == 2 || taskType == 3){
             testTime = intParameter("tpRunMins");
+            ret.setTpclient(threads);
         }
-        else if(taskType == 0 || taskType == 4){
-            testTime = intParameter("xpRunMins");
-        }
+
         final int _duration = testTime;
 
         logger.info("Begin to run :" + clientName + ", Test Duration is "  + _duration + " mins");
@@ -343,15 +306,6 @@ public abstract class Client {
                                     if(taskType == 8) {
                                         logger.info("This is tenant "+tenant_num);
                                         logger.info("Client"+tenant_num+" : Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalList[tenant_num-1] / (elpased_time / 1000.0)));
-                                    }
-                                }
-                                if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)) {
-                                    for(int apidx = 0;apidx < 13;apidx++) {
-                                        if(hist.getAPItem(apidx).getN() == 0)
-                                            continue;
-                                    }
-                                    if(taskType == 9) {
-                                        logger.info("Client"+tenant_num+" : Current " + (i + 1) + "/10 time AP QPS is " + String.format("%.2f", apTotalList[tenant_num-1] / (elpased_time / 1000.0)));
                                     }
                                 }
                             }
@@ -420,6 +374,11 @@ public abstract class Client {
             if (taskType == 2) {
                 ret.setTpTotal(tpTotalCount);
                 ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+            }
+
+            if (taskType == 3) {
+                ret.setTpTotal(tpTotalCount);
+                ret.setTps_rw(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
             }
         }
 
