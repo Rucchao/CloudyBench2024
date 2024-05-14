@@ -13,13 +13,16 @@ import com.cloudybench.dbconn.ConnectionMgr;
 import com.cloudybench.load.DataGenerator_Sales;
 import com.cloudybench.load.ExecSQL;
 import com.cloudybench.stats.Result;
+import com.cloudybench.util.NeonMetric;
 import com.cloudybench.workload.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -193,10 +196,8 @@ public class CloudyBench {
             logger.info("Concurrency = 0");
             logger.info("====================Thank you!========================");
 
-
             return;
         }
-
 
         ExecutorService es = Executors.newFixedThreadPool(tasks.size());
         List<Future> future = new ArrayList<Future>();
@@ -230,7 +231,7 @@ public class CloudyBench {
         logger.info("Cloud TP Workload is done.");
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ParseException, IOException {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         File file = new File("conf/log4j2.properties");
         context.setConfigLocation(file.toURI());
@@ -239,7 +240,9 @@ public class CloudyBench {
         int[][] Con=null;
         logger.info("Hi~ this is CloudyBench");
         int total_test_time = 0;
-
+        int first_con=0;
+        int second_con=0;
+        int third_con=0;
         CommandProcessor cmdProcessor = new CommandProcessor(args);
         HashMap<String,String> argsList = cmdProcessor.commandPaser(args);
         int type = 0;
@@ -254,7 +257,14 @@ public class CloudyBench {
             ConfigLoader.confFile = argsList.get("c");
             config.loadConfig();
             String testTime=config.prop.getProperty("testTime");
-            total_test_time=Integer.parseInt(testTime);
+            String elastic_testTime=config.prop.getProperty("elastic_testTime");
+            String first_con_str=config.prop.getProperty("first_con");
+            String second_con_str=config.prop.getProperty("second_con");
+            String third_con_str=config.prop.getProperty("third_con");
+            total_test_time = Integer.parseInt(elastic_testTime);
+            first_con = Integer.parseInt(first_con_str);
+            second_con = Integer.parseInt(second_con_str);
+            third_con = Integer.parseInt(third_con_str);
             config.printConfig();
         }
 
@@ -302,32 +312,56 @@ public class CloudyBench {
                     Con= new int[total_test_time][bench.TP_tenant_num];
 
                     // the concurrency in the first minute
-                    Con[0][0]=1;
+                    Con[0][0]=first_con;
                     //Con[0][1]=5;
 
-
                     // the concurrency in the second minute
+                    Con[1][0]=second_con;
                     //Con[1][0]=5; //tenant 0
                     //Con[1][1]=5; // tenant 1
 
-
                     // the concurrency in the third minute
+                    Con[2][0]=third_con;
                     //Con[2][0]=5;
                     //Con[2][1]=5;
 
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String StartTime = dateFormat.format(System.currentTimeMillis());
+
+                    logger.info("Elastic test starts at " + StartTime);
+                    double total_tps=0;
+
 
                     for (int i = 1; i <= total_test_time; i++) {
-                        logger.info("This is the "+i+"-th time slot...");
-                        bench.runCloudTP(bench.TP_tenant_num, Con[i-1]);
-                        // if( hybench.getRes().getTpsList() != null && Con[i - 1][0] > 0)
-                        for (int j = 0; j < bench.TP_tenant_num; j++) {
-                            if (Con[i - 1][j] != 0) {
-                                bench.getRes().printResult(type);
-                                break;
-                            }
+                            logger.info("This is the "+i+"-th time slot...");
+                            bench.runCloudTP(bench.TP_tenant_num, Con[i-1]);
+                            // if( hybench.getRes().getTpsList() != null && Con[i - 1][0] > 0)
+                            Result res= bench.getRes();
+                            double tps=res.getTpsList()[0];
+                            total_tps+=tps;
+                            //res.printResult(type);
                         }
-                        // if( hybench.getRes().getTpsList() != null)
-                        //     hybench.getRes().printResult(type);
+                    // need to compute the average TPS for three minutes
+                    System.out.println("====================Elasticity Summary========================");
+
+                    double avg_tps=total_tps/3;
+
+                    System.out.printf("The elastic average tps is  : %10.2f \n", avg_tps  * 1.0);
+
+                    String cdb = config.prop.getProperty("cdb","neon");
+
+                    if(cdb.equals("neon")){
+                        // caculate the resources
+                        NeonMetric neon = new NeonMetric();
+                        String json=neon.metricJson(StartTime);
+                        String url = config.prop.getProperty("metric_url","404");
+                        double cpus = neon.doPostRequest(url,json);
+                        double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
+                        double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
+                        int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
+                        double resource_cost=cpus * rcu_c+cpus * rcu_m * cpu_mem_ratio;
+                        System.out.println("-----------E-Score--------------------");
+                        System.out.printf("The E1-Score is   : %10.2f \n", (avg_tps/resource_cost)  * 1.0);
                     }
                 }
 
@@ -337,6 +371,14 @@ public class CloudyBench {
                     //bench.res.setlagtime();
                     bench.getRes().printResult(type);
                 }
+
+                else if(cmd.equalsIgnoreCase("runScaling")) {
+                    type = 3;
+                    bench.runReplica();
+                    //bench.res.setlagtime();
+                    bench.getRes().printResult(type);
+                }
+
                 else{
                     logger.error("Run task not found : " + cmd);
                     cmdProcessor.printHelp();

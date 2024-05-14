@@ -80,31 +80,12 @@ public class ConnectionMgr {
             Class.forName(prop.getProperty("classname_replica"));
             //DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
 
-            // get a random replica url
-            //double rand = rg.getRandomDouble();
-            int rand = ThreadLocalRandom.current().nextInt(1, 100);
-            if(rand<40){
-                conn = DriverManager.getConnection(
-                        prop.getProperty("url_replica_1"),
-                        prop.getProperty("username_replica"),
-                        prop.getProperty("password_replica"));
-               // System.out.println("The replica url is url_replica_1!");
+            // get a replica url
 
-            }
-            else if(rand<70){
-                conn = DriverManager.getConnection(
-                        prop.getProperty("url_replica_2"),
-                        prop.getProperty("username_replica"),
-                        prop.getProperty("password_replica"));
-               // System.out.println("The replica url is url_replica_2!");
-            }
-            else if (rand<100){
-                conn = DriverManager.getConnection(
-                        prop.getProperty("url_replica_3"),
-                        prop.getProperty("username_replica"),
-                        prop.getProperty("password_replica"));
-              //  System.out.println("The replica url is url_replica_3!");
-            }
+            conn = DriverManager.getConnection(
+                    prop.getProperty("url_replica"),
+                    prop.getProperty("username_replica"),
+                    prop.getProperty("password_replica"));
 
             conn.setAutoCommit(false);
         } catch (SQLException e) {
@@ -180,14 +161,14 @@ public class ConnectionMgr {
             logger.error("Read configure failed : " + ConfigLoader.confFile,e);
             e.printStackTrace();
         }
-        String url = prop.getProperty("url");
-        String username = prop.getProperty("username");
-        String password = prop.getProperty("password");
+        String url = null;
+        String username = null;
+        String password = null;
         try {
             Class.forName(prop.getProperty("classname"));
             url = prop.getProperty("url_"+tenant_number);
             username = prop.getProperty("username_"+tenant_number);
-            password = prop.getProperty("password");
+            password = prop.getProperty("password_"+tenant_number);
             conn = DriverManager.getConnection(
                     url,
                     username,

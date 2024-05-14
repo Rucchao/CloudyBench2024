@@ -57,6 +57,20 @@ public class DateUtility {
         return Dateplus1day;
     }
 
+    public static Date AddMinutes(Date originalDate, int add) {
+        long delta = TimeUnit.MINUTES.toMillis(add);
+        long now = originalDate.getTime();
+        Date newdate = new Date(now + delta);
+        return newdate;
+    }
+
+    public static Date MinusHours(Date originalDate, int add) {
+        long delta = TimeUnit.HOURS.toMillis(add);
+        long now = originalDate.getTime();
+        Date newdate = new Date(now - delta);
+        return newdate;
+    }
+
     public static String convertDateToString(Date date)
     {
         // "yyyy-MM-dd HH:mm:ss.SSS"

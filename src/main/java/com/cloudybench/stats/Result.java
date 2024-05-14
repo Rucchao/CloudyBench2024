@@ -116,6 +116,7 @@ public class Result {
         this.tpsList = TpsList;
     }
 
+
     public void setlagList(ArrayList llist) {
         this.laglist = llist;
     }
