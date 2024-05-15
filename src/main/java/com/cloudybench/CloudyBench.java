@@ -255,15 +255,6 @@ public class CloudyBench {
         if(argsList.containsKey("c")){
             ConfigLoader.confFile = argsList.get("c");
             config.loadConfig();
-            String testTime=config.prop.getProperty("testTime");
-            String elastic_testTime=config.prop.getProperty("elastic_testTime");
-            String first_con_str=config.prop.getProperty("first_con");
-            String second_con_str=config.prop.getProperty("second_con");
-            String third_con_str=config.prop.getProperty("third_con");
-            total_test_time = Integer.parseInt(elastic_testTime);
-            first_con = Integer.parseInt(first_con_str);
-            second_con = Integer.parseInt(second_con_str);
-            third_con = Integer.parseInt(third_con_str);
             config.printConfig();
         }
 
@@ -307,6 +298,15 @@ public class CloudyBench {
 
                 else if(cmd.equalsIgnoreCase("runElastic")){
                     type=8;
+
+                    String elastic_testTime=config.prop.getProperty("elastic_testTime");
+                    String first_con_str=config.prop.getProperty("first_con");
+                    String second_con_str=config.prop.getProperty("second_con");
+                    String third_con_str=config.prop.getProperty("third_con");
+                    total_test_time = Integer.parseInt(elastic_testTime);
+                    first_con = Integer.parseInt(first_con_str);
+                    second_con = Integer.parseInt(second_con_str);
+                    third_con = Integer.parseInt(third_con_str);
 
                     // Workload Pattern Generation
                     Con= new int[total_test_time][bench.TP_tenant_num];
@@ -365,6 +365,115 @@ public class CloudyBench {
                     }
                 }
 
+                else if(cmd.equalsIgnoreCase("runTenancy")){
+                    type=8;
+                    String elastic_testTime=config.prop.getProperty("elastic_testTime");
+                    total_test_time = Integer.parseInt(elastic_testTime);
+
+                    // configure the multi-tenancy workload
+                    String first_con_1_str=config.prop.getProperty("first_con_1");
+                    String second_con_1_str=config.prop.getProperty("second_con_1");
+                    String third_con_1_str=config.prop.getProperty("third_con_1");
+
+                    String first_con_2_str=config.prop.getProperty("first_con_2");
+                    String second_con_2_str=config.prop.getProperty("second_con_2");
+                    String third_con_2_str=config.prop.getProperty("third_con_2");
+
+                    String first_con_3_str=config.prop.getProperty("first_con_3");
+                    String second_con_3_str=config.prop.getProperty("second_con_3");
+                    String third_con_3_str=config.prop.getProperty("third_con_3");
+
+                    int first_con_1 = Integer.parseInt(first_con_1_str);
+                    int second_con_1 = Integer.parseInt(second_con_1_str);
+                    int third_con_1 = Integer.parseInt(third_con_1_str);
+
+                    int first_con_2 = Integer.parseInt(first_con_2_str);
+                    int second_con_2 = Integer.parseInt(second_con_2_str);
+                    int third_con_2 = Integer.parseInt(third_con_2_str);
+
+                    int first_con_3 = Integer.parseInt(first_con_3_str);
+                    int second_con_3 = Integer.parseInt(second_con_3_str);
+                    int third_con_3 = Integer.parseInt(third_con_3_str);
+
+
+                    // Workload Pattern Generation
+                    Con= new int[total_test_time][bench.TP_tenant_num];
+
+                    // the concurrency in the first minute
+                    Con[0][0]=first_con_1;
+                    Con[0][1]=first_con_2;
+                    Con[0][2]=first_con_3;
+
+                    // the concurrency in the second minute
+                    Con[1][0]=second_con_1;
+                    Con[1][1]=second_con_2;
+                    Con[1][2]=second_con_3;
+
+                    // the concurrency in the third minute
+                    Con[2][0]=third_con_1;
+                    Con[2][1]=third_con_2;
+                    Con[2][2]=third_con_3;
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String StartTime = dateFormat.format(System.currentTimeMillis());
+
+                    logger.info("Multi-tenancy test starts at " + StartTime);
+                    double total_tenant1_tps=0;
+                    double total_tenant2_tps=0;
+                    double total_tenant3_tps=0;
+
+                    for (int i = 1; i <= total_test_time; i++) {
+                        logger.info("This is the " + i + "-th time slot...");
+                        bench.runCloudTP(bench.TP_tenant_num, Con[i - 1]);
+                        for (int j = 0; j < bench.TP_tenant_num; j++) {
+                            if (Con[i - 1][j] != 0) {
+                                //bench.getRes().printResult(type);
+                                Result res= bench.getRes();
+                                total_tenant1_tps += res.getTpsList()[0];
+                                total_tenant2_tps += res.getTpsList()[1];
+                                total_tenant3_tps += res.getTpsList()[2];
+                                break;
+                            }
+                        }
+                    }
+
+                    System.out.println("====================Multi-Tenancy Summary========================");
+
+                    double geomean_tps=Math.pow(total_tenant1_tps/3*total_tenant2_tps/3*total_tenant3_tps/3, 1/3.0);
+
+                    System.out.printf("The multitenancy average tps is  : %10.2f \n",geomean_tps * 1.0);
+
+                    String cdb = config.prop.getProperty("cdb","neon");
+
+                    if(cdb.equals("neon")){
+                        // caculate the total resource cost
+                        NeonMetric neon = new NeonMetric();
+                        String json=neon.metricJson(StartTime);
+                        double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
+                        double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
+                        int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
+
+                        // tenant 1
+                        String url_1 = config.prop.getProperty("metric_url_1","404");
+                        double cpus_1 = neon.doPostRequest(url_1,json);
+
+                        // tenant 2
+                        String url_2 = config.prop.getProperty("metric_url_2","404");
+                        double cpus_2 = neon.doPostRequest(url_2,json);
+
+                        // tenant 3
+                        String url_3 = config.prop.getProperty("metric_url_3","404");
+                        double cpus_3 = neon.doPostRequest(url_3,json);
+
+                        double resource_cost=cpus_1 * rcu_c+cpus_1 * rcu_m * cpu_mem_ratio
+                                +cpus_2 * rcu_c+cpus_2 * rcu_m * cpu_mem_ratio
+                                +cpus_3 * rcu_c+cpus_3 * rcu_m * cpu_mem_ratio;
+                        System.out.println("-----------T-Score--------------------");
+                        System.out.printf("The total resource cost is   : %10.2f \n", resource_cost);
+                        System.out.printf("The T-Score is   : %10.10f \n", (2.14/resource_cost* 1.0) );
+                    }
+                }
+
                 else if(cmd.equalsIgnoreCase("runReplica")) {
                     type = 2;
                     bench.runReplica(type);
@@ -387,7 +496,7 @@ public class CloudyBench {
 
                     System.out.printf("The RW average tps is  : %10.2f \n", res.getTps_rw()  * 1.0);
 
-                    System.out.printf("The RW-RO average tps is  : %10.2f \n", res.getTps()  * 1.0);
+                    System.out.printf("The RW-RO average tps is  : %10.2f \n", res.getTps_ro()  * 1.0);
 
                     System.out.println("-----------E2-Score--------------------");
                     System.out.printf("The E2-Score is   : %10.2f \n", (res.getTps()/(res.getTps_rw()*replica_num))  * 1.0);

@@ -51,25 +51,49 @@ cpu_mem_ratio=4
 metric_url=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 
 ## support cloud database benchmarking for multi-tenancy
-tenant_num=1
+tenant_num=3
 
 url_1=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_1=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 username_1=cycchao6535
 password_1=4HrcGV8IPhZd
 tpclient_1=1
 
-url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1x
-username_2=postgres
-password_2=postgres
+url_2=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_2=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
+username_2=cycchao6535
+password_2=4HrcGV8IPhZd
 tpclient_2=1
+
+url_3=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_3=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
+username_3=cycchao6535
+password_3=4HrcGV8IPhZd
+tpclient_3=1
 
 t1_percent_1=5
 t2_percent_1=15
 t3_percent_1=80
 
-t1_percent_2=80
+first_con_1=1
+second_con_1=5
+third_con_1=1
+
+t1_percent_2=5
 t2_percent_2=15
-t3_percent_2=5
+t3_percent_2=80
+
+first_con_2=1
+second_con_2=5
+third_con_2=1
+
+t1_percent_3=5
+t2_percent_3=15
+t3_percent_3=80
+
+first_con_3=5
+second_con_3=1
+third_con_3=5
 
 dist=latest
 

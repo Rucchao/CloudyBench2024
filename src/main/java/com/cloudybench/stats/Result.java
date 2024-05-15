@@ -314,12 +314,6 @@ public class Result {
             }
         }
 
-        if(type==9){
-            for (int i = 0; i < tenant_num; i++) {
-                logger.info("Tenant"+(i+1)+" : final aps is " + apsList[i]);
-            }
-        }
-
         logger.info("====================Thank you!========================");
     }
 }

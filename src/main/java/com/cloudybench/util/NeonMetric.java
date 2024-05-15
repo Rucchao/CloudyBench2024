@@ -64,7 +64,7 @@ public class NeonMetric {
 
     public double doPostRequest(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
-        System.out.println(json);
+        //System.out.println(json);
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("accept", "application/json")

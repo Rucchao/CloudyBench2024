@@ -178,6 +178,7 @@ public abstract class Client {
         }
 
         else if(taskType == 2 || taskType == 3){
+            tpTotalCount = 0;
             threads = intParameter("tpclient");
         }
 
@@ -374,6 +375,7 @@ public abstract class Client {
             if (taskType == 2) {
                 ret.setTpTotal(tpTotalCount);
                 ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+                ret.setTps_ro(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
             }
 
             if (taskType == 3) {
