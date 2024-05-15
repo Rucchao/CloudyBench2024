@@ -10,7 +10,7 @@ classname_replica=org.postgresql.Driver
 
 ## neon config
 url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-url_replica=jdbc:postgresql://ep-rapid-violet-a1gi6zys-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica=jdbc:postgresql://ep-dry-water-a1b40msc-pooler.ap-southeast-1.aws.neon.tech/cloudybench_sf1?sslmode=require
 username=cycchao6535
 password=4HrcGV8IPhZd
 username_replica=cycchao6535
@@ -24,7 +24,7 @@ password_replica=4HrcGV8IPhZd
 <!-- username_replica=postgres -->
 <!-- password_replica=postgres -->
 
-tpclient=10
+tpclient=1
 tpRunMins=1
 
 t1_percent=5
@@ -95,6 +95,6 @@ first_con_3=5
 second_con_3=1
 third_con_3=5
 
-dist=latest
+dist=uniform
 
 contention_num=11
