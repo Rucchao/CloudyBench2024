@@ -1,14 +1,31 @@
 # CloudBench - A New Benchmark for Cloud-Native Databases 
 
-## TODO (2024.1.8)
+## Supporting P-Score calculation as follows:
 
-* 渐进式发压 （实现方案，timer）
-  
-* 多租户发压 (完成双租户发压接口)
 ```
-./hybench -t runCloudTP -c conf/db.prop -f conf/stmt_mysql.toml -m 2
-
-./hybench -t runCloudAP -c conf/db.prop -f conf/stmt_mysql.toml -m 2
+-t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1
 ```
-* IOPS: 多租户同时事务请求 (完成runcloudTP接口实现)
 
+## Supporting E1-Score calculation as follows:
+
+```
+-t runElastic -c conf/pg.props -f conf/stmt_postgres.toml -m 1
+```
+
+## Supporting E2-Score calculation as follows:
+
+```
+-t runScaling -c conf/pg.props -f conf/stmt_postgres.toml -m 1
+```
+
+## Supporting T-Score calculation as follows:
+
+```
+-t runTenancy -c conf/pg.props -f conf/stmt_postgres.toml -m 3
+```
+
+## Supporting C-Score calculation as follows:
+
+## Supporting R-Score calculation as follows:
+
+## Supporting F-Score calculation as follows:
