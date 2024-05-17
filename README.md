@@ -12,9 +12,11 @@
 -t runElastic -c conf/pg.props -f conf/stmt_postgres.toml -m 1
 ```
 
-## Supporting R-Score calculation as follows:
+## Supporting R-Score and F-Score calculation as follows:
 
-## Supporting F-Score calculation as follows:
+```
+-t runFailOver -c conf/pg.props -f conf/stmt_postgres.toml -m 2
+```
 
 ## Supporting E2-Score calculation as follows:
 

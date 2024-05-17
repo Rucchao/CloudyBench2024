@@ -1,4 +1,4 @@
-import com.cloudybench.util.NeonMetric;
+import com.cloudybench.util.NeonAPI;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -6,14 +6,7 @@ import okhttp3.Response;
 import okhttp3.MediaType;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.cloudybench.load.DateUtility;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class Test {
                 OkHttpClient client = new OkHttpClient();
@@ -54,7 +47,20 @@ public class Test {
                 }
 
         public static void main(String[] args) throws SQLException, IOException, ParseException {
-            //System.out.println("04zt007bp26pvfvdrwvp6mjkjl7s03wryxx8t6psv01qnhtzu2w31puove2mxv8o");
+            NeonAPI api= new NeonAPI();
+
+            // restart the endpoint
+        //    api.Endpoint("https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d",0);
+
+            String res1=api.getEndpoint("https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d");
+            System.out.println(res1);
+
+            // restart the endpoint
+            api.Endpoint("https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d",2);
+
+            String res2=api.getEndpoint("https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d");
+            System.out.println(res2);
+
             //Test example = new Test();
             //String json = example.metricJson("2024-05-13T05:40:53.937Z", "2024-05-13T05:50:53.937Z");
 
@@ -121,6 +127,5 @@ public class Test {
                 // 2. add/remove a replica and run a RO test (TPS')
 
                 // 3. run a RO test (TPS'')
-
     }
 }

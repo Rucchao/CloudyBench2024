@@ -3,7 +3,6 @@ package com.cloudybench.workload;
 import com.cloudybench.ConfigLoader;
 import com.cloudybench.dbconn.ConnectionMgr;
 import com.cloudybench.load.DateUtility;
-
 import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;

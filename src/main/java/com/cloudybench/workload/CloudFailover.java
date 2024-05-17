@@ -15,7 +15,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CloudReplica extends Client {
+public class CloudFailover extends Client {
     int tp1_percent = 15;
     int tp2_percent = 5;
     int tp3_percent = 80;
@@ -227,7 +227,9 @@ public class CloudReplica extends Client {
             cr.setErrorCode(String.valueOf(e.getErrorCode()));
         }  finally {
             try {
-                pstmt.close();
+                if(pstmt!=null){
+                    pstmt.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -239,22 +241,25 @@ public class CloudReplica extends Client {
         int type = getTaskType();
         ClientResult ret = new ClientResult();
         ClientResult cr = null;
-        Connection conn= ConnectionMgr.getConnection();
-        Connection conn_replica = ConnectionMgr.getReplicaConnection();
+        Connection conn=null;
+        Connection conn_replica=null;
         // get the primary and replica url
         long totalElapsedTime = 0L;
         try {
-            if(type == 2){
+            if(type == 5){
                 while(!exitFlag) {
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
+                        conn = ConnectionMgr.getConnection();
                         cr = execTxn1(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent){
+                        conn = ConnectionMgr.getConnection();
                         cr = execTxn2(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
                         // get a random replica connection
+                        conn_replica = ConnectionMgr.getReplicaConnection();
                         cr = execTxn3(conn_replica);
                     }
                     totalElapsedTime += cr.getRt();
@@ -263,16 +268,19 @@ public class CloudReplica extends Client {
                 }
                 ret.setRt(totalElapsedTime);
             }
-            if(type == 3){
+            if(type==4){
                 while(!exitFlag) {
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
+                        conn = ConnectionMgr.getConnection();
                         cr = execTxn1(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent){
+                        conn = ConnectionMgr.getConnection();
                         cr = execTxn2(conn);
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
+                        conn = ConnectionMgr.getConnection();
                         cr = execTxn3(conn);
                     }
                     totalElapsedTime += cr.getRt();
@@ -285,11 +293,17 @@ public class CloudReplica extends Client {
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            if(conn != null || conn_replica != null ) {
+            if(conn != null) {
                 try {
                     conn.close();
-                    conn_replica.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            if(conn_replica != null || type==5) {
+                try {
+                    conn_replica.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

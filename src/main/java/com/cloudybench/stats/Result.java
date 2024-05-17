@@ -25,6 +25,10 @@ public class Result {
     private double[] apsList;
     private long tpTotal;
     private long apTotal;
+    private long F_Score_RW;
+    private long R_Score_RW;
+    private long F_Score_RO;
+    private long R_Score_RO;
     private double tps;
     private double tps_rw;
     private double tps_ro;
@@ -101,6 +105,35 @@ public class Result {
     public void setTps(double tps) {
         this.tps = tps;
     }
+
+    public void setF_Score_RW(long f_score) {
+        this.F_Score_RW = f_score;
+    }
+
+    public long getF_Score_RW(){
+        return this.F_Score_RW;
+    }
+
+    public void setR_Score_RW(long r_score) {
+        this.R_Score_RW = r_score;
+    }
+
+    public long getR_Score_RW(){ return this.R_Score_RW; }
+
+    public void setF_Score_RO(long f_score) {
+        this.F_Score_RO = f_score;
+    }
+
+    public long getF_Score_RO(){
+        return this.F_Score_RO;
+    }
+
+    public void setR_Score_RO(long r_score) {
+        this.R_Score_RO = r_score;
+    }
+
+    public long getR_Score_RO(){ return this.R_Score_RO; }
+
 
     public void setTps_rw(double tps) {
         this.tps_rw = tps;
@@ -243,16 +276,12 @@ public class Result {
 
         switch(type){
             case 1:
-                logger.info("TP Concurrency is " + getTpclient());
-                logger.info("Total amount of TP Transaction is " + getTpTotal());
-                logger.info("TPS is " + getTps());
-                break;
             case 2:
+            case 4:
                 logger.info("TP Concurrency is " + getTpclient());
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
                 logger.info("TPS is " + getTps());
                 break;
-
             case 3:
                 logger.info("TP Concurrency is " + getTpclient());
                 logger.info("Total amount of TP Transaction is " + getTpTotal());
@@ -296,6 +325,19 @@ public class Result {
         }
 
         if(type == 3) {
+            System.out.println("------------TP-------------------");
+            for (int tpidx = 0; tpidx < 3; tpidx++) {
+                System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",
+                        (tpidx + 1),
+                        hist.getTPItem(tpidx).getMax(),
+                        hist.getTPItem(tpidx).getMin(),
+                        hist.getTPItem(tpidx).getMean(),
+                        hist.getTPItem(tpidx).getPercentile(95),
+                        hist.getTPItem(tpidx).getPercentile(99));
+            }
+        }
+
+        if(type == 4 || type ==5 ) {
             System.out.println("------------TP-------------------");
             for (int tpidx = 0; tpidx < 3; tpidx++) {
                 System.out.printf("TP Transaction %2d : max rt : %10.2f | min rt : %10.2f | avg rt : %10.2f | 95%% rt : %10.2f | 99%% rt : %10.2f \n",

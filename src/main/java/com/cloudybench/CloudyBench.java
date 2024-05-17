@@ -9,18 +9,16 @@ package com.cloudybench;
  *      Four different test types are provided, including runAP, runTP, runXP ,runHTAP and runAll.
  **/
 
-import com.cloudybench.dbconn.ConnectionMgr;
 import com.cloudybench.load.DataGenerator_Sales;
 import com.cloudybench.load.ExecSQL;
 import com.cloudybench.stats.Result;
-import com.cloudybench.util.NeonMetric;
+import com.cloudybench.util.NeonAPI;
 import com.cloudybench.workload.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,6 +112,54 @@ public class CloudyBench {
         List<Client> tasks = new ArrayList<Client>();
         if(Integer.parseInt(tpClient) > 0){
             Client job = Client.initTask(ConfigLoader.prop,"CloudReplica",taskType);
+            job.setRet(res);
+            job.setVerbose(verbose);
+            job.setSqls(sqls);
+            tasks.add(job);
+        }
+        else {
+            logger.warn("There is no an available tp client");
+            return;
+        }
+        ExecutorService es = Executors.newFixedThreadPool(tasks.size());
+        List<Future> future = new ArrayList<Future>();
+        for (final Client j : tasks) {
+            future.add( es.submit(new Runnable() {
+                        public void run() {
+                            j.startTask();
+                        }
+                    })
+            );
+        }
+        for(int flength=0;flength < future.size();flength++) {
+            Future f = future.get(flength);
+            if (f != null && !f.isCancelled() && !f.isDone()) {
+                try {
+                    f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (!es.isShutdown() || !es.isTerminated()) {
+            es.shutdownNow();
+        }
+        res.setEndTs(dateFormat.format(new Date()));
+        logger.info("TP Workload is done.");
+    }
+
+    // Measure the fail-over performance
+    public void runFailover(int taskType){
+        logger.info("Begin TP Workload");
+        res.setStartTS(dateFormat.format(new Date()));
+        String tpClient = ConfigLoader.prop.getProperty("tpclient");
+
+        List<Client> tasks = new ArrayList<Client>();
+        if(Integer.parseInt(tpClient) > 0){
+            Client job = Client.initTask(ConfigLoader.prop,"CloudFailover",taskType);
             job.setRet(res);
             job.setVerbose(verbose);
             job.setSqls(sqls);
@@ -297,7 +343,6 @@ public class CloudyBench {
                 }
 
                 else if(cmd.equalsIgnoreCase("runElastic")){
-                    type=8;
 
                     String elastic_testTime=config.prop.getProperty("elastic_testTime");
                     String first_con_str=config.prop.getProperty("first_con");
@@ -352,7 +397,7 @@ public class CloudyBench {
 
                     if(cdb.equals("neon")){
                         // caculate the resources
-                        NeonMetric neon = new NeonMetric();
+                        NeonAPI neon = new NeonAPI();
                         String json=neon.metricJson(StartTime);
                         String url = config.prop.getProperty("metric_url","404");
                         double cpus = neon.doPostRequest(url,json);
@@ -366,7 +411,6 @@ public class CloudyBench {
                 }
 
                 else if(cmd.equalsIgnoreCase("runTenancy")){
-                    type=8;
                     String elastic_testTime=config.prop.getProperty("elastic_testTime");
                     total_test_time = Integer.parseInt(elastic_testTime);
 
@@ -447,7 +491,7 @@ public class CloudyBench {
 
                     if(cdb.equals("neon")){
                         // caculate the total resource cost
-                        NeonMetric neon = new NeonMetric();
+                        NeonAPI neon = new NeonAPI();
                         String json=neon.metricJson(StartTime);
                         double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
                         double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
@@ -478,7 +522,7 @@ public class CloudyBench {
                     type = 2;
                     bench.runReplica(type);
                     //bench.res.setlagtime();
-                    bench.getRes().printResult(type);
+                    //bench.getRes().printResult(type);
                 }
 
                 else if(cmd.equalsIgnoreCase("runScaling")) {
@@ -500,6 +544,28 @@ public class CloudyBench {
 
                     System.out.println("-----------E2-Score--------------------");
                     System.out.printf("The E2-Score is   : %10.2f \n", (res.getTps()/(res.getTps_rw()*replica_num))  * 1.0);
+                }
+
+                else if(cmd.equalsIgnoreCase("runFailOver")) {
+                    // RW-RO
+                    bench.runFailover(5);
+                    // RW
+                    bench.runFailover(4);
+                    // Results
+                    Result res= bench.getRes();
+
+                    System.out.println("====================Failover Summary========================");
+
+                    System.out.println("-----------F-Score--------------------");
+                    System.out.println(res.getF_Score_RO());
+                    System.out.println(res.getF_Score_RW());
+                    System.out.printf("The F-Score is  : %d \n", (res.getF_Score_RO()+res.getF_Score_RW())/2);
+
+                    System.out.println("-----------R-Score--------------------");
+                    System.out.println("====================Failover Summary========================");
+                    System.out.println(res.getR_Score_RO());
+                    System.out.println(res.getR_Score_RW());
+                    System.out.printf("The R-Score is  : %d \n", (res.getR_Score_RO()+res.getR_Score_RW())/2);
                 }
 
                 else{

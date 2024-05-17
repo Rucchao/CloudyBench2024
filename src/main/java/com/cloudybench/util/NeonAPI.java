@@ -10,10 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NeonMetric {
+public class NeonAPI {
     OkHttpClient client = new OkHttpClient();
 
-    public NeonMetric() throws ParseException {
+    public NeonAPI() throws ParseException {
     }
 
     // code request code here
@@ -97,11 +97,48 @@ public class NeonMetric {
         return total_used_cpus;
     }
 
+    // url="https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d"
+    public String getEndpoint(String url) throws IOException {
+        OkHttpClient client = new OkHttpClient();
 
-    // input
-    //String json = metricJson("2024-05-13 19:48:36");
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("authorization", "Bearer 04zt007bp26pvfvdrwvp6mjkjl7s03wryxx8t6psv01qnhtzu2w31puove2mxv8o")
+                .build();
 
+        Response response = client.newCall(request).execute();
 
-    // output
+        return response.body().string();
+    }
 
+    // type 0: suspend, type 1: start, type 2: restart
+    public void Endpoint(String url, int type) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON, "{}");
+        switch (type){
+            case 0:
+                url=url+"/suspend";
+                break;
+            case 1:
+                url=url+"/start";
+                break;
+            case 2:
+                url=url+"/restart";
+                break;
+        }
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("accept", "application/json")
+                .addHeader("authorization", "Bearer 04zt007bp26pvfvdrwvp6mjkjl7s03wryxx8t6psv01qnhtzu2w31puove2mxv8o")
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        //System.out.println(response.body().string());
+
+    }
 }

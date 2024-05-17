@@ -12,6 +12,7 @@ import com.cloudybench.Constant;
 import com.cloudybench.load.ConfigReader;
 import com.cloudybench.stats.Histogram;
 import com.cloudybench.stats.Result;
+import com.cloudybench.util.NeonAPI;
 import com.cloudybench.util.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,8 @@ public abstract class Client {
     static int testid1=1;
     static int testid2=300001;
     static int testid3=300001;
+    long F_Score=0;
+    long R_Score=0;
     int tenant_num=0;
 
     int num = 0;
@@ -102,6 +105,7 @@ public abstract class Client {
     public void setTaskType(int type){
         this.taskType = type;
     }
+
     public int getTaskType(){
         return taskType;
     }
@@ -177,10 +181,12 @@ public abstract class Client {
             lagtime= new ArrayList<Long>();
         }
 
-        else if(taskType == 2 || taskType == 3){
+        else if(taskType == 2 || taskType == 3 ){
             tpTotalCount = 0;
             threads = intParameter("tpclient");
         }
+        else if (taskType == 4 || taskType == 5)
+            threads = intParameter("tpclient");
 
         else if(taskType == 8){
             threads = concurrency;
@@ -258,7 +264,7 @@ public abstract class Client {
             hist = ret.getHist();
         }
 
-         if (taskType == 1 || taskType == 8 || taskType == 2 || taskType == 3){
+         if (taskType == 1 || taskType == 8 || taskType == 2 || taskType == 3  || taskType == 4|| taskType == 5){
             testTime = intParameter("tpRunMins");
             ret.setTpclient(threads);
         }
@@ -275,10 +281,71 @@ public abstract class Client {
                     try {
                         long duration = _duration * 60 * 1000L;
                         long elpased_time = 0L;
+                        long TCount=0;
+                        long interval=0;
+                        long threshold=0;
+                        boolean recovery_service=false;
+                        boolean recovery_tps=false;
                         for (int i = 0; i < 10; i++) {
+                            System.out.println("The current i is "+i);
+                            System.out.println("The before count is "+tpTotalCount);
+                            TCount=tpTotalCount;
+                            // the transactions are processing here
                             Thread.sleep(_duration * 60 * 100L);
+
                             elpased_time += _duration * 60 * 100L;
 
+                            // injecting the failure point
+                            if(clientName.equalsIgnoreCase("CloudFailover")){
+                                System.out.println("The after count is "+tpTotalCount);
+                                interval=tpTotalCount-TCount;
+                                System.out.println("The current interval is >>>>>>>>>>>>>>"+interval);
+                                if(taskType==4 && i==2)
+                                {
+                                    // restarting the RW endpoint
+                                    ConfigLoader config = new ConfigLoader();
+                                    String cdb = config.prop.getProperty("cdb","neon");
+                                    String endpoint = config.prop.getProperty("RW_endpoint","neon");
+                                    if(cdb.equals("neon")){
+                                        NeonAPI neon = new NeonAPI();
+                                        neon.Endpoint(endpoint,2);
+                                        threshold=interval;
+                                    }
+                                    System.out.println("This is a RW failure point !!");
+                                }
+
+                                if(taskType==5 && i==2)
+                                {
+                                    // restarting the RW endpoint
+                                    ConfigLoader config = new ConfigLoader();
+                                    String cdb = config.prop.getProperty("cdb","neon");
+                                    String endpoint = config.prop.getProperty("RO_endpoint","neon");
+                                    if(cdb.equals("neon")){
+                                        NeonAPI neon = new NeonAPI();
+                                        neon.Endpoint(endpoint,2);
+                                        threshold=interval;
+                                    }
+                                    System.out.println("This is a RO failure point !!");
+                                }
+                                // caculate the R-Score in seconds
+                                if(i>2 && interval>=0 && recovery_service==false){
+                                    recovery_service=true;
+                                    F_Score=_duration * 6 * (i-2);
+                                    System.out.println("The F Score is "+F_Score);
+                                }
+
+                                // caculate the R-Score in seconds
+                                if(i>2 && interval>=threshold && recovery_tps==false){
+                                    recovery_tps=true;
+                                    R_Score=_duration * 6 * (i-2);
+                                    System.out.println("The R Score is "+R_Score);
+                                }
+                                if(i==9 && recovery_tps==false){
+                                    R_Score=_duration * 6 * (i-2);
+                                    System.out.println("The R Score is "+R_Score);
+                                }
+
+                            }
                             if(verbose){
                                 if(clientName.equalsIgnoreCase("CloudLagTime") || clientName.equalsIgnoreCase("CloudReplica") ) {
                                     for(int tpidx = 0;tpidx < 4;tpidx++) {
@@ -292,6 +359,8 @@ public abstract class Client {
                                                 + " | 99% rt : " + String.format("%.2f",hist.getTPItem(tpidx).getPercentile(99)));
                                     }
                                     logger.info("Current " + (i + 1) + "/10 time TP TPS is " + String.format("%.2f", tpTotalCount / (elpased_time / 1000.0)));
+
+
                                 }
                                 if(clientName.equalsIgnoreCase("CloudTPClient"+tenant_num)) {
                                     for(int tpidx = 0;tpidx < 3;tpidx++) {
@@ -310,7 +379,6 @@ public abstract class Client {
                                     }
                                 }
                             }
-
                         }
 
                         stopTask();
@@ -324,7 +392,6 @@ public abstract class Client {
                 }
             };
             timer.start();
-
         }
 
         int _num_thread = threads;
@@ -395,14 +462,20 @@ public abstract class Client {
             }
         }
 
-        if(clientName.equalsIgnoreCase("CloudAPClient"+tenant_num)) {
-
-            if (taskType == 9) {
-                ret.setapTotalList(apTotalList);
-
-                apsList[tenant_num-1]=Double.valueOf(String.format("%.2f", apTotalList[tenant_num-1] / (testDuration * 60.0)));
-                ret.setapsList(apsList);
-                //ret.setTps(Double.valueOf(String.format("%.2f", tpTotalList[tenant_num-1] / (testDuration * 60.0))));
+        if(clientName.equalsIgnoreCase("CloudFailover")){
+            if (taskType == 4) {
+                ret.setF_Score_RW(F_Score);
+                ret.setR_Score_RW(R_Score);
+                ret.setTpTotal(tpTotalCount);
+                ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+                ret.setTps_ro(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+            }
+            if (taskType == 5) {
+                ret.setF_Score_RO(F_Score);
+                ret.setR_Score_RO(R_Score);
+                ret.setTpTotal(tpTotalCount);
+                ret.setTps(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
+                ret.setTps_ro(Double.valueOf(String.format("%.2f", tpTotalCount / (testDuration * 60.0))));
             }
         }
 

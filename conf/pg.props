@@ -10,7 +10,10 @@ classname_replica=org.postgresql.Driver
 
 ## neon config
 url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-url_replica=jdbc:postgresql://ep-dry-water-a1b40msc-pooler.ap-southeast-1.aws.neon.tech/cloudybench_sf1?sslmode=require
+url_replica=jdbc:postgresql://ep-holy-mouse-a13onz98-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+
+RW_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d
+RO_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-holy-mouse-a13onz98
 username=cycchao6535
 password=4HrcGV8IPhZd
 username_replica=cycchao6535
@@ -24,7 +27,7 @@ password_replica=4HrcGV8IPhZd
 <!-- username_replica=postgres -->
 <!-- password_replica=postgres -->
 
-tpclient=1
+tpclient=10
 tpRunMins=1
 
 t1_percent=5
@@ -37,6 +40,8 @@ t4_percent_lag=5
 fresh_rate=0.5
 cpu_num=4
 mem_num=16
+IOPS=1000
+Network=4750
 node_num=1
 testTime=1
 
@@ -47,6 +52,9 @@ second_con=5
 third_con=1
 rcu_c=92.9
 rcu_m=5.4
+rcu_io=0.00287
+rcu_mbps=0.00868
+
 cpu_mem_ratio=4
 metric_url=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 
