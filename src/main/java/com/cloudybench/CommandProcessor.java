@@ -113,27 +113,13 @@ public class CommandProcessor {
     // help info
     public void printHelp(){
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "hybench " + " [options]", cmdOptions );
+        formatter.printHelp( "cloudybench " + " [options]", cmdOptions );
         System.out.println("Example:");
         System.out.println("Step 1: run sql files for init or cleanup");
-        System.out.println("  hybench -t sql -f sql/sqlfile.sql -c conf/db.properties");
+        System.out.println("  cloudybench -t sql -f sql/sqlfile.sql -c conf/db.properties");
         System.out.println("Step 2: generate data and load");
-        System.out.println("  hybench -t gendata -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 3: run TP workload");
-        System.out.println("  hybench -t runtp -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 4: run AP workload");
-        System.out.println("  hybench -t runap -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 5: run XP workload");
-        System.out.println("  hybench -t runxp -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 6: run fresh workload");
-        System.out.println("  hybench -t runfresh -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 7: run htap workload");
-        System.out.println("  hybench -t runhtap -c conf/db.properties -f sql/sql_file.sql");
-        System.out.println("Step 8: run cloud TP workload");
-        System.out.println("  hybench -t runCloudTP -c conf/db.properties -f sql/sql_file.sql -m tenant_num");
-        System.out.println("Step 9: run cloud AP workload");
-        System.out.println("  hybench -t runCloudAP -c conf/db.properties -f sql/sql_file.sql -m tenant_num");
-        System.out.println("Step 10: run all workload");
-        System.out.println("  hybench -t runall -c conf/db.properties -f sql/sql_file.sql");
+        System.out.println("  cloudybench -t gendata -c conf/db.properties -f sql/sql_file.sql");
+        System.out.println("Step 3: run P-Score Evaluation");
+        System.out.println("  -t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
     }
 }

@@ -287,8 +287,10 @@ public abstract class Client {
                         boolean recovery_service=false;
                         boolean recovery_tps=false;
                         for (int i = 0; i < 10; i++) {
-                            System.out.println("The current i is "+i);
-                            System.out.println("The before count is "+tpTotalCount);
+                            if(clientName.equalsIgnoreCase("CloudFailover")) {
+                                System.out.println("The current i is "+i);
+                                System.out.println("The before count is "+tpTotalCount);
+                            }
                             TCount=tpTotalCount;
                             // the transactions are processing here
                             Thread.sleep(_duration * 60 * 100L);

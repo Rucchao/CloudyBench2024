@@ -10,10 +10,10 @@ classname_replica=org.postgresql.Driver
 
 ## neon config
 url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-url_replica=jdbc:postgresql://ep-holy-mouse-a13onz98-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica=jdbc:postgresql://ep-curly-mud-a1oalh41-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
 
 RW_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d
-RO_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-holy-mouse-a13onz98
+RO_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-curly-mud-a1oalh41
 username=cycchao6535
 password=4HrcGV8IPhZd
 username_replica=cycchao6535
@@ -27,7 +27,7 @@ password_replica=4HrcGV8IPhZd
 <!-- username_replica=postgres -->
 <!-- password_replica=postgres -->
 
-tpclient=10
+tpclient=1
 tpRunMins=1
 
 t1_percent=5
@@ -38,6 +38,7 @@ t1_percent_lag=80
 t2_percent_lag=15
 t4_percent_lag=5
 fresh_rate=0.5
+
 cpu_num=4
 mem_num=16
 IOPS=1000
@@ -104,5 +105,4 @@ second_con_3=1
 third_con_3=5
 
 dist=uniform
-
 contention_num=11

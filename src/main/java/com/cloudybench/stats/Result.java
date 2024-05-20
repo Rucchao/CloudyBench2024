@@ -21,30 +21,35 @@ public class Result {
     private int tenant_num;
     private int[] tpTotalList;
     private double[] tpsList;
-    private int[] apTotalList;
-    private double[] apsList;
     private long tpTotal;
-    private long apTotal;
     private long F_Score_RW;
     private long R_Score_RW;
     private long F_Score_RO;
     private long R_Score_RO;
+    private long F_Score;
+    private long R_Score;
+    private double geometric_tps;
     private double tps;
     private double tps_rw;
     private double tps_ro;
-    private double qps;
+    private double elastic_tps;
+    private double T_Score;
+    private double P_SCORE;
+    private double E1_SCORE;
+    private double E2_SCORE;
     private String startTS ;
     private String endTs;
     private Histogram hist;
     private double freshness = 0;
     private ArrayList<Long> laglist;
     private long lagtime = 0;
+    private long C_Score = 0;
     private int apclient ;
     private int tpclient;
     private int xapclient ;
     private int xtpclient;
-    private String riskRate;
-    private int apRound;
+
+
 
     public Result(int tenant_num){
         this.tenant_num=tenant_num;
@@ -54,20 +59,36 @@ public class Result {
         this.tenant_num = num;
     }
 
-    public void setApRound(int round) {
-        this.apRound = round;
+    public void setElastic_tps(double tps) {
+        this.elastic_tps = elastic_tps;
     }
 
-    public int getApRound() {
-        return this.apRound;
+    public double getElastic_tps() {
+        return this.elastic_tps;
     }
 
-    public void setRiskRate(String riskRate) {
-        this.riskRate = riskRate;
+    public void setE1_SCORE(double score) {
+        this.E1_SCORE = score;
     }
 
-    public String getRiskRate() {
-        return this.riskRate;
+    public double getE1_SCORE() {
+        return this.E1_SCORE;
+    }
+
+    public void setE2_SCORE(double score) {
+        this.E2_SCORE = score;
+    }
+
+    public double getE2_SCORE() {
+        return this.E2_SCORE;
+    }
+
+    public void setP_SCORE(double score) {
+        this.P_SCORE = score;
+    }
+
+    public double getP_SCORE() {
+        return this.P_SCORE;
     }
 
     public Result(){
@@ -82,20 +103,12 @@ public class Result {
         return hist;
     }
 
-    public void setApTotal(long apTotal) {
-        this.apTotal = apTotal;
-    }
-
     public void setDbType(String dbType) {
         this.dbType = dbType;
     }
 
     public void setEndTs(String endTs) {
         this.endTs = endTs;
-    }
-
-    public void setQps(double qps) {
-        this.qps = qps;
     }
 
     public void setStartTS(String startTS) {
@@ -112,6 +125,30 @@ public class Result {
 
     public long getF_Score_RW(){
         return this.F_Score_RW;
+    }
+
+    public void setF_Score(long f_score) {
+        this.F_Score = f_score;
+    }
+
+    public long getF_Score(){
+        return this.F_Score;
+    }
+
+    public void setR_Score(long r_score) {
+        this.R_Score = r_score;
+    }
+
+    public long getR_Score(){
+        return this.R_Score;
+    }
+
+    public void setT_Score(double t_score) {
+        this.T_Score = t_score;
+    }
+
+    public double getT_Score(){
+        return this.T_Score;
     }
 
     public void setR_Score_RW(long r_score) {
@@ -134,6 +171,9 @@ public class Result {
 
     public long getR_Score_RO(){ return this.R_Score_RO; }
 
+    public void setTps_geometric(double tps) {
+        this.geometric_tps = tps;
+    }
 
     public void setTps_rw(double tps) {
         this.tps_rw = tps;
@@ -151,6 +191,10 @@ public class Result {
         return this.tps_ro;
     }
 
+    public double getTps_geometric(){
+        return this.geometric_tps;
+    }
+
     public void setTpTotal(long tpTotal) {
         this.tpTotal = tpTotal;
     }
@@ -166,7 +210,6 @@ public class Result {
     public void setTpsList(double[] TpsList) {
         this.tpsList = TpsList;
     }
-
 
     public void setlagList(ArrayList llist) {
         this.laglist = llist;
@@ -188,20 +231,14 @@ public class Result {
         return average;
     }
 
-    public void setapTotalList(int[] apTotalList) {
-        this.apTotalList = apTotalList;
+    public void setLagtime(long time) { this.lagtime=time; }
+
+    public void setC_Score(long c_score) {
+        this.C_Score = c_score;
     }
 
-    public void setapsList(double[] apsList) {
-        this.apsList = apsList;
-    }
-
-    public int getApclient() {
-        return apclient;
-    }
-
-    public void setApclient(int apclient) {
-        this.apclient = apclient;
+    public double getC_Score(){
+        return this.C_Score;
     }
 
     public int getTpclient() {
@@ -236,16 +273,8 @@ public class Result {
         return tpTotal;
     }
 
-    public long getApTotal() {
-        return apTotal;
-    }
-
     public double getTps() {
         return tps;
-    }
-
-    public double getQps() {
-        return qps;
     }
 
     public String getStartTS() {
@@ -260,18 +289,18 @@ public class Result {
         return freshness;
     }
 
-    public void setlagtime(long lagtime){
-        this.lagtime = lagtime;
-    }
-
     public void printResult(int type){
         logger.info("====================Test Summary========================");
         logger.info("Test starts at " + getStartTS());
         logger.info("Test ends at " + getEndTs());
         Double rcu_c = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_c","1"));
         Double rcu_m = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_m","1"));
+        Double rcu_io = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_io","1"));
+        Double rcu_mbps = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_mbps","1"));
         int cpu_num = Integer.parseInt(ConfigLoader.prop.getProperty("cpu_num","1"));
         int mem_num = Integer.parseInt(ConfigLoader.prop.getProperty("mem_num","1"));
+        int IOPS = Integer.parseInt(ConfigLoader.prop.getProperty("IOPS","1"));
+        int Network = Integer.parseInt(ConfigLoader.prop.getProperty("Network","1"));
         int node_num = Integer.parseInt(ConfigLoader.prop.getProperty("node_num","1"));
 
         switch(type){
@@ -304,9 +333,13 @@ public class Result {
             }
 
             logger.info("-----------Avg-Lag-Time--------------------");
-            logger.info("Lag Time (ms) : "+ getLagtime() * 1.0);
+            long lagtime = getLagtime();
+            setLagtime(lagtime);
+            logger.info("Lag Time (ms) : "+ lagtime);
             System.out.println("-----------C-Score--------------------");
-            System.out.printf("C-Score : %10.2f \n", (getLagtime() / node_num)  * 1.0);
+            long C_Score= lagtime / node_num;
+            setC_Score(C_Score);
+            System.out.printf("C-Score : %d \n", C_Score);
         }
 
         if(type == 2) {
@@ -321,7 +354,9 @@ public class Result {
                         hist.getTPItem(tpidx).getPercentile(99));
             }
             System.out.println("-----------P-Score--------------------");
-            System.out.printf("P-Score : %10.2f \n", (getTps() / (rcu_c*cpu_num+rcu_m*mem_num)*node_num)  * 1.0);
+            double P_Score = (getTps() / (rcu_c*cpu_num+rcu_m*mem_num+rcu_io*IOPS+rcu_mbps*Network)*node_num)  * 1.0;
+            setP_SCORE(P_Score);
+            System.out.printf("P-Score : %10.5f \n", P_Score);
         }
 
         if(type == 3) {
@@ -355,7 +390,6 @@ public class Result {
                 logger.info("Tenant"+(i+1)+" : final tps is " + tpsList[i]);
             }
         }
-
-        logger.info("====================Thank you!========================");
+        //logger.info("====================Thank you!========================");
     }
 }

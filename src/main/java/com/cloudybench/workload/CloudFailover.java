@@ -301,7 +301,7 @@ public class CloudFailover extends Client {
                 }
             }
 
-            if(conn_replica != null || type==5) {
+            if(conn_replica != null && type==5) {
                 try {
                     conn_replica.close();
                 } catch (SQLException e) {
