@@ -1,12 +1,4 @@
 package com.cloudybench.stats;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file Histogram.java
- * @description
- *   calc histogram during workload running
- **/
 
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 

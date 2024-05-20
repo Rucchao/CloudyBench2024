@@ -15,7 +15,7 @@ bash cloudybench -t runElastic -c conf/pg.props -f conf/stmt_postgres.toml -m 1
 ## Supporting R-Score and F-Score calculation as follows:
 
 ```
-bash cloudybench-t runFailOver -c conf/pg.props -f conf/stmt_postgres.toml -m 1
+bash cloudybench -t runFailOver -c conf/pg.props -f conf/stmt_postgres.toml -m 1
 ```
 
 ## Supporting E2-Score calculation as follows:

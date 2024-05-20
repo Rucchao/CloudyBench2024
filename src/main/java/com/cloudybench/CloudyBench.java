@@ -1,13 +1,4 @@
 package com.cloudybench;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file Hybench.java
- * @description
- *      Here is the main class. Load configuration from conf file and read options from command line.
- *      Four different test types are provided, including runAP, runTP, runXP ,runHTAP and runAll.
- **/
 
 import com.cloudybench.load.DataGenerator_Sales;
 import com.cloudybench.load.ExecSQL;

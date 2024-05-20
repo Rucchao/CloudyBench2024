@@ -1,12 +1,4 @@
 package com.cloudybench.load;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file ConfigReader.java
- * @description
- *
- **/
 
 import com.moandjiezana.toml.Toml;
 import java.io.BufferedReader;

@@ -1,12 +1,4 @@
 package com.cloudybench;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file CommandProcessor.java
- * @description
- *   define options in command line.
- **/
 
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;

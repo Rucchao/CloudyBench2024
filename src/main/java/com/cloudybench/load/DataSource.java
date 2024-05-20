@@ -1,11 +1,5 @@
 package com.cloudybench.load;
-/**
- * @time 2023-03-04
- * @version 1.0.0
- * @file DataSource.java
- * @description
- *  load data generator config
- **/
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

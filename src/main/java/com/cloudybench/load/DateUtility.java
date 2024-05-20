@@ -1,12 +1,6 @@
 package com.cloudybench.load;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file DateUtility.java
- * @description
- *  Define date type and normalization
- **/
+
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

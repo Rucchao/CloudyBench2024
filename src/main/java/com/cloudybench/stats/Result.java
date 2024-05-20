@@ -6,15 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file Result.java
- * @description
- *   record test result and print summary after all workloads are done.
- **/
-
 public class Result {
     public static Logger logger = LogManager.getLogger(Result.class);
     private String dbType = null;

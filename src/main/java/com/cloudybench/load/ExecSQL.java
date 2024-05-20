@@ -1,12 +1,5 @@
 package com.cloudybench.load;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file ExecSQL.java
- * @description
- *  execute sqls, such as ddl file
- **/
+
 import com.cloudybench.dbconn.ConnectionMgr;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

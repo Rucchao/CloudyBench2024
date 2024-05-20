@@ -1,12 +1,6 @@
 package com.cloudybench.sales;
 
-/**
- * @time 2024-1-11
- * @version 1.0.0
- * @file Customer.java
- * @description
- *   for customer table
- **/
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;

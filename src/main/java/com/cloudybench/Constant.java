@@ -1,12 +1,4 @@
 package com.cloudybench;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file Constant.java
- * @description
- *      Define different database constant value.
- **/
 
 public class Constant {
     final public static int DB_MYSQL = 3;

@@ -1,12 +1,4 @@
 package com.cloudybench.util;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file RandomGenerator.java
- * @description
- *   used to generate random value
- **/
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

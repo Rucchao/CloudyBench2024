@@ -1,12 +1,5 @@
 package com.cloudybench.load;
 
-/**
- * @time 2024-1-11
- * @version 1.0.0
- * @file DataGenerator_Sales.java
- * @description
- *
- **/
 
 import com.cloudybench.sales.*;
 import com.cloudybench.util.RandomGenerator;

@@ -1,12 +1,6 @@
 package com.cloudybench;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file ConfigLoader.java
- * @description
- *   Load config and print config when start workload.
- **/
+
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;

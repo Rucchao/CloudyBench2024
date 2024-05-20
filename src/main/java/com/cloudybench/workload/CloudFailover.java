@@ -1,12 +1,4 @@
 package com.cloudybench.workload;
-/**
- *
- * @time 2024-01-12
- * @version 1.0.0
- * @file TPClient.java
- * @description
- *   TP Client Processor,include 6 TP transactions
- **/
 
 import com.cloudybench.dbconn.ConnectionMgr;
 import com.cloudybench.load.DateUtility;

@@ -1,12 +1,6 @@
 package com.cloudybench.load;
-/**
- *
- * @time 2023-03-04
- * @version 1.0.0
- * @file Writer.java
- * @description
- *  write data into cvs
- **/
+
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
