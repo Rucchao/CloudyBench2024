@@ -329,14 +329,14 @@ public abstract class Client {
                                     }
                                     System.out.println("This is a RO failure point !!");
                                 }
-                                // caculate the R-Score in seconds
+                                // calculate the F-Score in seconds
                                 if(i>2 && interval>=0 && recovery_service==false){
                                     recovery_service=true;
                                     F_Score=_duration * 6 * (i-2);
                                     System.out.println("The F Score is "+F_Score);
                                 }
 
-                                // caculate the R-Score in seconds
+                                // calculate the R-Score in seconds
                                 if(i>2 && interval>=threshold && recovery_tps==false){
                                     recovery_tps=true;
                                     R_Score=_duration * 6 * (i-2);
@@ -346,7 +346,6 @@ public abstract class Client {
                                     R_Score=_duration * 6 * (i-2);
                                     System.out.println("The R Score is "+R_Score);
                                 }
-
                             }
                             if(verbose){
                                 if(clientName.equalsIgnoreCase("CloudLagTime") || clientName.equalsIgnoreCase("CloudReplica") ) {
@@ -415,8 +414,9 @@ public abstract class Client {
             }  catch(Exception e) {
                 logger.error("create thread failed " ,e );
             }
-
         }
+
+
 
         double maxElapsedTime = 0L;
         for (int i = 0; i < _num_thread; i++) {
@@ -465,6 +465,7 @@ public abstract class Client {
         }
 
         if(clientName.equalsIgnoreCase("CloudFailover")){
+            logger.info("The task is hanging...");
             if (taskType == 4) {
                 ret.setF_Score_RW(F_Score);
                 ret.setR_Score_RW(R_Score);
@@ -497,12 +498,10 @@ public abstract class Client {
 
     public void stopTask() {
         exitFlag =  true;
-        int p = 0;
-        if(taskType != 7){
-            if(fs != null){
-                for(Future ft:fs){
-                    ft.cancel(true);
-                }
+        logger.info("The task is stopping...");
+        if(fs != null){
+            for(Future ft:fs){
+                ft.cancel(true);
             }
         }
     }

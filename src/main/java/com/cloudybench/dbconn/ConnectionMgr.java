@@ -56,8 +56,11 @@ public class ConnectionMgr {
         catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }finally {
+            if(conn!=null)
+                return conn;
+            else return null;
         }
-        return conn;
     }
 
     public static Connection getReplicaConnection(){
@@ -88,16 +91,15 @@ public class ConnectionMgr {
                     prop.getProperty("password_replica"));
 
             conn.setAutoCommit(false);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            logger.error( "Getting connection failed! " + prop.getProperty("url")+" : " + prop.getProperty("username")+" : " + prop.getProperty("password"));
-            e.printStackTrace();
         }
         catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        return conn;
+        }finally {
+            if(conn!=null)
+                return conn;
+            else return null;
+            }
     }
 
     // type = 0 means get connection from tp url and type =1 means get conneciton from ap url
@@ -182,8 +184,11 @@ public class ConnectionMgr {
         catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }finally {
+            if(conn!=null)
+                return conn;
+            else return null;
         }
-        return conn;
     }
 
 }

@@ -27,7 +27,7 @@ password_replica=4HrcGV8IPhZd
 <!-- username_replica=postgres -->
 <!-- password_replica=postgres -->
 
-tpclient=1
+tpclient=5
 tpRunMins=1
 
 t1_percent=5

@@ -1,17 +1,23 @@
 package com.cloudybench.util;
 
+import com.cloudybench.CloudyBench;
 import com.cloudybench.load.DateUtility;
 import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 
 public class NeonAPI {
     OkHttpClient client = new OkHttpClient();
+    public static Logger neologger = LogManager.getLogger(NeonAPI.class);
+
+    //.setLevel(Level.FINE);
 
     public NeonAPI() throws ParseException {
     }
@@ -137,7 +143,8 @@ public class NeonAPI {
                 .build();
 
         Response response = client.newCall(request).execute();
-
+        neologger.info(response.body().string());
+        response.close();
         //System.out.println(response.body().string());
 
     }

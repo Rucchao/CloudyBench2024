@@ -93,6 +93,7 @@ public class CloudFailover extends Client {
         }  finally {
             try {
                 pstmt.close();
+                conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -101,7 +102,7 @@ public class CloudFailover extends Client {
     }
 
     // Payment
-    public ClientResult execTxn2(Connection conn) {
+    public ClientResult execTxn2(Connection conn) throws SQLException {
 
         ClientResult cr = new ClientResult();
         PreparedStatement pstmt[] = new PreparedStatement[3];
@@ -174,6 +175,7 @@ public class CloudFailover extends Client {
                 pstmt[0].close();
                 pstmt[1].close();
                 pstmt[2].close();
+                conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -182,7 +184,7 @@ public class CloudFailover extends Client {
     }
 
     // Order Status
-    public ClientResult execTxn3(Connection conn) {
+    public ClientResult execTxn3(Connection conn) throws SQLException {
         ClientResult cr = new ClientResult();
         PreparedStatement pstmt = null;
         long responseTime = 0L;
@@ -218,6 +220,7 @@ public class CloudFailover extends Client {
             cr.setErrorMsg(e.getMessage());
             cr.setErrorCode(String.valueOf(e.getErrorCode()));
         }  finally {
+                conn.close();
             try {
                 if(pstmt!=null){
                     pstmt.close();
@@ -243,16 +246,22 @@ public class CloudFailover extends Client {
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
                         conn = ConnectionMgr.getConnection();
-                        cr = execTxn1(conn);
+                        if(conn!=null){
+                            cr = execTxn1(conn);
+                        }
                     }
                     else if(rand < tp1_percent + tp2_percent){
                         conn = ConnectionMgr.getConnection();
-                        cr = execTxn2(conn);
+                        if(conn!=null){
+                            cr = execTxn2(conn);
+                        }
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
                         // get a random replica connection
                         conn_replica = ConnectionMgr.getReplicaConnection();
-                        cr = execTxn3(conn_replica);
+                        if(conn_replica!=null){
+                            cr = execTxn3(conn_replica);
+                        }
                     }
                     totalElapsedTime += cr.getRt();
                     if(exitFlag)
@@ -265,15 +274,21 @@ public class CloudFailover extends Client {
                     int rand = ThreadLocalRandom.current().nextInt(1, 100);
                     if(rand < tp1_percent){
                         conn = ConnectionMgr.getConnection();
-                        cr = execTxn1(conn);
+                        if(conn!=null){
+                            cr = execTxn1(conn);
+                        }
                     }
                     else if(rand < tp1_percent + tp2_percent){
                         conn = ConnectionMgr.getConnection();
-                        cr = execTxn2(conn);
+                        if(conn!=null){
+                            cr = execTxn2(conn);
+                        }
                     }
                     else if(rand < tp1_percent + tp2_percent + tp3_percent){
                         conn = ConnectionMgr.getConnection();
-                        cr = execTxn3(conn);
+                        if(conn!=null){
+                            cr = execTxn3(conn);
+                        }
                     }
                     totalElapsedTime += cr.getRt();
                     if(exitFlag)

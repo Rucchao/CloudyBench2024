@@ -39,5 +39,5 @@ bash cloudybench -t runTenancy -c conf/pg.props -f conf/stmt_postgres.toml -m 3
 ## Supporting O-Score calculation as follows:
 
 ```
-bash cloudybench-t runAll -c conf/pg.props -f conf/stmt_postgres.toml
+bash cloudybench -t runAll -c conf/pg.props -f conf/stmt_postgres.toml
 ```
