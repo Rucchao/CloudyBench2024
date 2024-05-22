@@ -1,23 +1,16 @@
 # CloudyBench - A Benchmark for Cloud-Native Databases
 
 
-## Data Generation and Loading [PostgreSQL]
+## Data Generation, Data Loading and Indexing
 ```
-psql -h localhost -U postgres -c 'create database cloudybench_sf1;'
-
 bash cloudybench -t sql -c conf/pg.props -f conf/ddl_cloudybench_pg.sql
 
 bash cloudybench -t gendata -c conf/pg.props -f conf/stmt_postgres.toml
 
-psql -h localhost -U postgres -d cloudybench_sf1 -f conf/load_cloudybench_pg.sql
-```
+bash cloudybench -t sql -f conf/load_cloudybench_pg.sql
 
-## Index Building [PostgreSQL]
-
-```
 bash cloudybench -t sql -c conf/pg.props -f conf/create_index_cloudybench_pg.sql
 ```
-
 
 ## Supporting P-Score calculation as follows (Take Neon as an example):
 
