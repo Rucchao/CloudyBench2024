@@ -28,7 +28,7 @@ public class NeonAPI {
                 .url(url)
                 .addHeader("accept", "application/json")
                 .addHeader("content-type","application/json")
-                .addHeader("authorization", "Bearer 5foyjvxag8e8pkrk44ka4o5upgoi4p3h446k8c2y5jddwy4reab1h4dikw6yd0qd")
+                .addHeader("authorization", "Bearer xxx")
                 .build();
 
         Response response = client.newCall(request).execute();
@@ -75,7 +75,7 @@ public class NeonAPI {
                 .url(url)
                 .addHeader("accept", "application/json")
                 .addHeader("content-type","application/json")
-                .addHeader("authorization", "Bearer 5foyjvxag8e8pkrk44ka4o5upgoi4p3h446k8c2y5jddwy4reab1h4dikw6yd0qd")
+                .addHeader("authorization", "Bearer xxx")
                 .post(body)
                 .build();
 
@@ -111,7 +111,7 @@ public class NeonAPI {
                 .url(url)
                 .get()
                 .addHeader("accept", "application/json")
-                .addHeader("authorization", "Bearer 04zt007bp26pvfvdrwvp6mjkjl7s03wryxx8t6psv01qnhtzu2w31puove2mxv8o")
+                .addHeader("authorization", "Bearer xxx")
                 .build();
 
         Response response = client.newCall(request).execute();

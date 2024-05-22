@@ -330,11 +330,11 @@ public class CloudyBench {
     }
 
     public void runScaling(ConfigLoader config){
-        System.out.println("====================The RW is running========================");
+        System.out.println("====================The RW is running================================");
         runReplica(3);
         System.out.println("====================The RW and RO are running========================");
         runReplica(2);
-        System.out.println("====================Scaling Summary========================");
+        System.out.println("====================Scaling Summary==================================");
 
         int replica_num=Integer.parseInt(config.prop.getProperty("node_num","1"));
 
@@ -561,6 +561,7 @@ public class CloudyBench {
                 else if(cmd.equalsIgnoreCase("runReplica")) {
                     type = 2;
                     bench.runReplica(type);
+                    bench.res.printResult(type);
                 }
 
                 else if(cmd.equalsIgnoreCase("runScaling")) {
