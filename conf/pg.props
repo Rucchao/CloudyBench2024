@@ -9,11 +9,11 @@ classname_replica=org.postgresql.Driver
 ## support cloud database benchmarking for transaction processing
 
 ## neon config
-url=jdbc:postgresql://url
-url_replica=jdbc:postgresql://url
+url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+url_replica=jdbc:postgresql://ep-curly-mud-a1oalh41-pooler.ap-southeast-1.aws.neon.tech：5432/cloudybench_sf1?sslmode=require
 
-RW_endpoint=url
-RO_endpoint=url
+RW_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d
+RO_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-curly-mud-a1oalh41
 username=cycchao6535
 password=4HrcGV8IPhZd
 username_replica=cycchao6535
@@ -27,7 +27,7 @@ password_replica=4HrcGV8IPhZd
 <!-- username_replica=postgres -->
 <!-- password_replica=postgres -->
 
-tpclient=5
+tpclient=10
 tpRunMins=1
 
 t1_percent=5
@@ -57,25 +57,25 @@ rcu_io=0.00287
 rcu_mbps=0.00868
 
 cpu_mem_ratio=4
-metric_url=metric_url
+metric_url=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=3
 
-url_1=url
-metric_url_1=url
+url_1=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_1=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 username_1=cycchao6535
 password_1=4HrcGV8IPhZd
 tpclient_1=1
 
-url_2=url
-metric_url_2=url
+url_2=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_2=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 username_2=cycchao6535
 password_2=4HrcGV8IPhZd
 tpclient_2=1
 
-url_3=url
-metric_url_3=url
+url_3=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
+metric_url_3=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
 username_3=cycchao6535
 password_3=4HrcGV8IPhZd
 tpclient_3=1
@@ -105,4 +105,5 @@ second_con_3=1
 third_con_3=5
 
 dist=uniform
+
 contention_num=11
