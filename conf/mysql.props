@@ -1,24 +1,23 @@
 sf=1x
 
-db=sqlserver
+db=mysql
 cdb=@db
 verbose=false
-classname=com.microsoft.sqlserver.jdbc.SQLServerDriver
-classname_replica=com.microsoft.sqlserver.jdbc.SQLServerDriver
+classname=com.mysql.cj.jdbc.Driver
+classname_replica=com.mysql.cj.jdbc.Driver
 
 ## support cloud database benchmarking for transaction processing
-
-url=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
-url_replica=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
+url=jdbc:mysql://localhost:3306/cloudybench_sf1x
+url_replica=jdbc:mysql://localhost:3306/cloudybench_sf1x
 
 RW_endpoint=@rw_endpoint
 RO_endpoint=@ro_endpoint
 username=@username
 password=@passwd
-username_replica=azureuser
-password_replica=wAh!5EgwTaE!fZV
+username_replica=@username
+password_replica=@passwd
 
-tpclient=5
+tpclient=1
 tpRunMins=1
 
 t1_percent=5
@@ -31,16 +30,16 @@ t4_percent_lag=5
 fresh_rate=0.5
 
 cpu_num=4
-mem_num=16
-IOPS=1000
-Network=4750
+mem_num=40
+IOPS=84000
+Network=10000
 node_num=1
 testTime=1
 
 ## support cloud database benchmarking for elasticity
 elastic_testTime=3
 first_con=1
-second_con=1
+second_con=5
 third_con=1
 rcu_c=92.9
 rcu_m=5.4
@@ -53,19 +52,19 @@ metric_url=@metric_url
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=3
 
-url_1=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
+url_1=jdbc:mysql://localhost:3306/cloudybench_sf1x
 metric_url_1=@metric_url_1
 username_1=@username
 password_1=@passwd
 tpclient_1=1
 
-url_2=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
+url_2=jdbc:mysql://localhost:3306/cloudybench_sf1x
 metric_url_2=@metric_url_2
 username_2=@username
 password_2=@passwd
 tpclient_2=1
 
-url_3=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
+url_3=jdbc:mysql://localhost:3306/cloudybench_sf1x
 metric_url_3=@metric_url_3
 username_3=@username
 password_3=@passwd

@@ -1,12 +1,28 @@
+# Insert
 [TP-1]
-sql = "INSERT INTO dbo.orderline(OL_O_ID, OL_P_ID, OL_QUANTITY, OL_TOTALAMOUNT, OL_UPDATEDDATE) VALUES (?,?,?,?,?);"
-
-[TP-2]
 sql = [
-    "SELECT TOP 1 O_ID, O_C_ID, O_TOTALAMOUNT, O_UPDATEDDATE FROM orders WHERE o_status='unpaid' ORDER BY NEWID()",
-    "UPDATE customer SET C_CREDIT=?, C_UPDATEDDATE=? WHERE C_ID=?",
-    "UPDATE orders SET O_UPDATEDDATE=? WHERE O_ID=?"
+    "INSERT INTO dbo.orderline(OL_O_ID, OL_P_ID, OL_QUANTITY, OL_TOTALAMOUNT, OL_UPDATEDDATE) VALUES (?,?,?,?,?);",
+    "SELECT max(ol_id) from orderline;",
+    "SELECT ol_id from orderline where ol_id=?;"
 ]
 
+# Update
+[TP-2]
+sql = [
+    "SELECT O_ID, O_C_ID, O_TOTALAMOUNT, O_UPDATEDDATE FROM orders WHERE O_ID=?;",
+    "UPDATE orders SET O_UPDATEDDATE=?, o_status='paid' WHERE O_ID=?;",
+    "UPDATE customer SET C_CREDIT=C_CREDIT+?, C_UPDATEDDATE=? WHERE C_ID=?;",
+    "SELECT O_UPDATEDDATE from orders where o_id=?"
+]
+
+# Read
 [TP-3]
-sql = "SELECT TOP 1 O_ID, O_DATE, O_STATUS FROM dbo.orders WHERE O_C_ID = ? order by O_UPDATEDDATE desc;"
+sql = "SELECT O_ID, O_DATE, O_STATUS FROM orders WHERE O_ID = ?;"
+
+# Delete
+[TP-4]
+sql = [
+    "SELECT TOP 1 OL_ID FROM orderline ORDER BY RAND();",
+    "Delete from orderline WHERE OL_ID=?;",
+    "select OL_ID from orderline where ol_id=?"
+]

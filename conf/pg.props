@@ -1,31 +1,21 @@
 sf=1x
 
 db=postgreSQL
-cdb=neon
+cdb=@db
 verbose=false
 classname=org.postgresql.Driver
 classname_replica=org.postgresql.Driver
 
 ## support cloud database benchmarking for transaction processing
+url=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+url_replica=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 
-## neon config
-url=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-url_replica=jdbc:postgresql://ep-curly-mud-a1oalh41-pooler.ap-southeast-1.aws.neon.tech：5432/cloudybench_sf1?sslmode=require
-
-RW_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d
-RO_endpoint=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-curly-mud-a1oalh41
-username=cycchao6535
-password=4HrcGV8IPhZd
-username_replica=cycchao6535
-password_replica=4HrcGV8IPhZd
-
-## local config
-<!-- url=jdbc:postgresql://localhost:5433/hy_sf1x -->
-<!-- url_replica=jdbc:postgresql://localhost:5433/hy_sf1x -->
-<!-- username=postgres -->
-<!-- password=postgres -->
-<!-- username_replica=postgres -->
-<!-- password_replica=postgres -->
+RW_endpoint=@rw_endpoint
+RO_endpoint=@ro_endpoint
+username=@username
+password=@passwd
+username_replica=@username
+password_replica=@passwd
 
 tpclient=10
 tpRunMins=1
@@ -48,36 +38,36 @@ testTime=1
 
 ## support cloud database benchmarking for elasticity
 elastic_testTime=3
-first_con=1
-second_con=5
-third_con=1
+first_con=5
+second_con=2
+third_con=5
 rcu_c=92.9
 rcu_m=5.4
 rcu_io=0.00287
 rcu_mbps=0.00868
 
 cpu_mem_ratio=4
-metric_url=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
+metric_url=@metric_url
 
 ## support cloud database benchmarking for multi-tenancy
 tenant_num=3
 
-url_1=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-metric_url_1=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
-username_1=cycchao6535
-password_1=4HrcGV8IPhZd
+url_1=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+metric_url_1=@metric_url_1
+username_1=@username
+password_1=@passwd
 tpclient_1=1
 
-url_2=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-metric_url_2=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
-username_2=cycchao6535
-password_2=4HrcGV8IPhZd
+url_2=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+metric_url_2=@metric_url_2
+username_2=@username
+password_2=@passwd
 tpclient_2=1
 
-url_3=jdbc:postgresql://ep-muddy-dew-a1nrws5d-pooler.ap-southeast-1.aws.neon.tech:5432/cloudybench_sf1?sslmode=require
-metric_url_3=https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d/stats
-username_3=cycchao6535
-password_3=4HrcGV8IPhZd
+url_3=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+metric_url_3=@metric_url_3
+username_3=@username
+password_3=@passwd
 tpclient_3=1
 
 t1_percent_1=5
@@ -105,5 +95,4 @@ second_con_3=1
 third_con_3=5
 
 dist=uniform
-
 contention_num=11

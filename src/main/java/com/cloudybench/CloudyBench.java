@@ -297,7 +297,10 @@ public class CloudyBench {
         for (int i = 1; i <= total_test_time; i++) {
             logger.info("This is the "+i+"-th time slot...");
             runCloudTP(1, Con[i-1]);
-            double tps=res.getTpsList()[0];
+            double tps = 0;
+            if (!(Con[i - 1][0] == 0)) {
+                tps = res.getTpsList()[0];
+            }
             total_tps+=tps;
         }
         // need to compute the average TPS for three minutes
