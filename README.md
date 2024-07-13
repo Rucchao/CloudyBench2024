@@ -13,7 +13,17 @@ bash cloudybench -t sql -c conf/pg.props -f conf/create_index_cloudybench_pg.sql
 ```
 
 ## Where to access patrameters (Take Neon as an example)
-![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+
+```
+RW_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@rw_endpoint
+
+RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@ro_endpoint
+
+metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@endpoint/stats
+```
 
 ## Supporting P-Score calculation as follows (Take Neon as an example):
 
