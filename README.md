@@ -12,7 +12,7 @@ bash cloudybench -t sql -f conf/load_cloudybench_pg.sql
 bash cloudybench -t sql -c conf/pg.props -f conf/create_index_cloudybench_pg.sql
 ```
 
-## Where to access patrameters (Take Neon as an example)
+## Cloud-native Database Deployment (Take Neon as an example)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
