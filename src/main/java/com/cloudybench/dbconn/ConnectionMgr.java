@@ -42,7 +42,6 @@ public class ConnectionMgr {
 
         try {
             Class.forName(prop.getProperty("classname"));
-            //DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
             conn = DriverManager.getConnection(
                     prop.getProperty("url"),
                     prop.getProperty("username"),
@@ -81,7 +80,6 @@ public class ConnectionMgr {
 
         try {
             Class.forName(prop.getProperty("classname_replica"));
-            //DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
 
             // get a replica url
 
@@ -102,7 +100,6 @@ public class ConnectionMgr {
             }
     }
 
-    // type = 0 means get connection from tp url and type =1 means get conneciton from ap url
     public static Connection getConnection(int type){
         Connection conn = null;
         Properties prop = new Properties();

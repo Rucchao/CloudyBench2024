@@ -5,7 +5,7 @@ package com.cloudybench.workload;
  * @version 1.0.0
  * @file TPClient.java
  * @description
- *   TP Client Processor,include 6 TP transactions
+ *   TP Client Processor,include 4 TP transactions
  **/
 
 import com.cloudybench.dbconn.ConnectionMgr;
