@@ -158,7 +158,7 @@ public abstract class Client {
         return boolParameter(paraName, false);
     }
 
-    // get db type, only mysql/oracle/pg supported
+    // get db type
     public int getDbType(String db){
 
         if(db.equalsIgnoreCase("postgreSQL")){

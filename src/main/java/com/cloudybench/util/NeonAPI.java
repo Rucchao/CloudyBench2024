@@ -102,8 +102,7 @@ public class NeonAPI {
 
         return total_used_cpus;
     }
-
-    // url="https://console.neon.tech/api/v2/projects/proud-bonus-37909019/endpoints/ep-muddy-dew-a1nrws5d"
+    
     public String getEndpoint(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
 

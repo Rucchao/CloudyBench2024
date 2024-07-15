@@ -16,7 +16,7 @@ public class CommandProcessor {
 
     // option builder. add new option if needed.
     public void optionBuilder(Options options){
-        options.addOption("h","help",false,"Print HyBench usage information");
+        options.addOption("h","help",false,"Print CloudyBench usage information");
 
         Option testType = Option.builder("t")
                 .longOpt("testType")
@@ -106,12 +106,27 @@ public class CommandProcessor {
     public void printHelp(){
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "cloudybench " + " [options]", cmdOptions );
-        System.out.println("Example:");
+        System.out.println("Example(Postgresql):");
         System.out.println("Step 1: run sql files for init or cleanup");
-        System.out.println("  cloudybench -t sql -f sql/sqlfile.sql -c conf/db.properties");
+        System.out.println("bash cloudybench -t sql -c conf/pg.props -f conf/ddl_cloudybench_pg.sql");
         System.out.println("Step 2: generate data and load");
-        System.out.println("  cloudybench -t gendata -c conf/db.properties -f sql/sql_file.sql");
+        System.out.println("bash cloudybench -t gendata -c conf/pg.props -f conf/stmt_postgres.toml");
+        System.out.println("bash cloudybench -t sql -f conf/load_cloudybench_pg.sql");
         System.out.println("Step 3: run P-Score Evaluation");
-        System.out.println("  -t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("bash cloudybench -t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 4: run P-Score Evaluation");
+        System.out.println("bash cloudybench -t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 5: run E1-Score Evaluation");
+        System.out.println("bash cloudybench -t runElastic -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 6: run R-Score & F-Score Evaluation");
+        System.out.println("bash cloudybench -t runFailOver -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 7: run E2-Score Evaluation");
+        System.out.println("bash cloudybench -t runScaling -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 8: run C-Score Evaluation");
+        System.out.println("bash cloudybench -t runLagTime -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
+        System.out.println("Step 9: run T-Score Evaluation");
+        System.out.println("bash cloudybench -t runTenancy -c conf/pg.props -f conf/stmt_postgres.toml -m 3");
+        System.out.println("Step 10: run O-Score Evaluation");
+        System.out.println("bash cloudybench -t runAll -c conf/pg.props -f conf/stmt_postgres.toml");
     }
 }
