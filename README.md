@@ -7,9 +7,9 @@ bash cloudybench -t sql -c conf/pg.props -f conf/ddl_cloudybench_pg.sql
 
 bash cloudybench -t gendata -c conf/pg.props -f conf/stmt_postgres.toml
 
-bash cloudybench -t sql -f conf/load_cloudybench_pg.sql
+psql -h localhost -U @username -d cloudybench_sf1x -f conf/load_cloudybench_pg.sql
 
-bash cloudybench -t sql -c conf/pg.props -f conf/create_index_cloudybench_pg.sql
+bash cloudybench -t sql -c conf/pg.props -f conf/create_sequence_cloudybench_pg.sql
 ```
 
 ## Cloud-Native Database Deployment (Take Neon as an example)
