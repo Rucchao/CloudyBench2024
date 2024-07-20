@@ -310,7 +310,8 @@ public abstract class Client {
                                     String endpoint = config.prop.getProperty("RW_endpoint","neon");
                                     if(cdb.equals("neon")){
                                         NeonAPI neon = new NeonAPI();
-                                        neon.Endpoint(endpoint,2);
+                                        String key = config.prop.getProperty("authentication_key");
+                                        neon.Endpoint(endpoint,2, key);
                                         threshold=interval;
                                     }
                                     System.out.println("This is a RW failure point !!");
@@ -324,7 +325,8 @@ public abstract class Client {
                                     String endpoint = config.prop.getProperty("RO_endpoint","neon");
                                     if(cdb.equals("neon")){
                                         NeonAPI neon = new NeonAPI();
-                                        neon.Endpoint(endpoint,2);
+                                        String key = config.prop.getProperty("authentication_key");
+                                        neon.Endpoint(endpoint,2, key);
                                         threshold=interval;
                                     }
                                     System.out.println("This is a RO failure point !!");

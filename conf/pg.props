@@ -9,6 +9,7 @@ classname_replica=org.postgresql.Driver
 ## support cloud database benchmarking for transaction processing
 url=jdbc:postgresql://localhost:5432/cloudybench_sf1x
 url_replica=jdbc:postgresql://localhost:5432/cloudybench_sf1x
+authentication_key = @authentication_key
 
 RW_endpoint=@rw_endpoint_url
 RO_endpoint=@ro_endpoint_url

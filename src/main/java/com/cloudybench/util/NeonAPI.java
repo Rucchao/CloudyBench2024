@@ -68,14 +68,14 @@ public class NeonAPI {
         return "{\"from\": \"" + from_str + "\",\"to\": \"" + to_str + "\",\"grouping\":\"min\",\"metrics\":[\"cpu_consumed_cores\",\"cpu_provisioned_cores\"]}";
     }
 
-    public double doPostRequest(String url, String json) throws IOException {
+    public double doPostRequest(String url, String json, String key) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         //System.out.println(json);
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("accept", "application/json")
                 .addHeader("content-type","application/json")
-                .addHeader("authorization", "Bearer xxx")
+                .addHeader("authorization", "Bearer " + key)
                 .post(body)
                 .build();
 
@@ -93,7 +93,7 @@ public class NeonAPI {
                 cpus = metric.getJSONArray("values");
                 for (int j = 0; j < cpus.length(); j++) {
                     if(!JSONObject.NULL.equals(cpus.get(j))){
-                        double used_cpus =(double) ((int) cpus.get(j));
+                        double used_cpus = Double.parseDouble(String.valueOf(cpus.get(j)));
                         total_used_cpus +=used_cpus;
                     }
                 }
@@ -119,7 +119,7 @@ public class NeonAPI {
     }
 
     // type 0: suspend, type 1: start, type 2: restart
-    public void Endpoint(String url, int type) throws IOException {
+    public void Endpoint(String url, int type, String key) throws IOException {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, "{}");
         switch (type){
@@ -138,7 +138,7 @@ public class NeonAPI {
                 .url(url)
                 .post(body)
                 .addHeader("accept", "application/json")
-                .addHeader("authorization", "Bearer 04zt007bp26pvfvdrwvp6mjkjl7s03wryxx8t6psv01qnhtzu2w31puove2mxv8o")
+                .addHeader("authorization", "Bearer " + key)
                 .build();
 
         Response response = client.newCall(request).execute();

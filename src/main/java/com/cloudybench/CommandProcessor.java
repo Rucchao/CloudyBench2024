@@ -109,9 +109,10 @@ public class CommandProcessor {
         System.out.println("Example(Postgresql):");
         System.out.println("Step 1: run sql files for init or cleanup");
         System.out.println("bash cloudybench -t sql -c conf/pg.props -f conf/ddl_cloudybench_pg.sql");
-        System.out.println("Step 2: generate data and load");
+        System.out.println("Step 2: generate data, load and create sequence");
         System.out.println("bash cloudybench -t gendata -c conf/pg.props -f conf/stmt_postgres.toml");
-        System.out.println("bash cloudybench -t sql -f conf/load_cloudybench_pg.sql");
+        System.out.println("psql -h localhost -U @username -d cloudybench_sf1x -f conf/load_cloudybench_pg.sql");
+        System.out.println("bash cloudybench -t sql -c conf/pg.props -f conf/create_sequence_cloudybench_pg.sql");
         System.out.println("Step 3: run P-Score Evaluation");
         System.out.println("bash cloudybench -t runReplica -c conf/pg.props -f conf/stmt_postgres.toml -m 1");
         System.out.println("Step 4: run P-Score Evaluation");

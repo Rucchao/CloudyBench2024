@@ -9,6 +9,7 @@ classname_replica=com.mysql.cj.jdbc.Driver
 ## support cloud database benchmarking for transaction processing
 url=jdbc:mysql://localhost:3306/cloudybench_sf1x
 url_replica=jdbc:mysql://localhost:3306/cloudybench_sf1x
+authentication_key = @authentication_key
 
 RW_endpoint=@rw_endpoint
 RO_endpoint=@ro_endpoint

@@ -317,7 +317,8 @@ public class CloudyBench {
             NeonAPI neon = new NeonAPI();
             String json=neon.metricJson(StartTime);
             String url = config.prop.getProperty("metric_url","404");
-            double cpus = neon.doPostRequest(url,json);
+            String key = config.prop.getProperty("authentication_key");
+            double cpus = neon.doPostRequest(url,json, key);
             double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
             double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
             double rcu_io = Double.parseDouble(config.prop.getProperty("rcu_io","0"));
@@ -465,18 +466,19 @@ public class CloudyBench {
             double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
             double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
             int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
+            String key = config.prop.getProperty("authentication_key");
 
             // tenant 1
             String url_1 = config.prop.getProperty("metric_url_1","404");
-            double cpus_1 = neon.doPostRequest(url_1,json);
+            double cpus_1 = neon.doPostRequest(url_1,json, key);
 
             // tenant 2
             String url_2 = config.prop.getProperty("metric_url_2","404");
-            double cpus_2 = neon.doPostRequest(url_2,json);
+            double cpus_2 = neon.doPostRequest(url_2,json, key);
 
             // tenant 3
             String url_3 = config.prop.getProperty("metric_url_3","404");
-            double cpus_3 = neon.doPostRequest(url_3,json);
+            double cpus_3 = neon.doPostRequest(url_3,json, key);
 
             double resource_cost=cpus_1 * rcu_c+cpus_1 * rcu_m * cpu_mem_ratio
                     +cpus_2 * rcu_c+cpus_2 * rcu_m * cpu_mem_ratio
