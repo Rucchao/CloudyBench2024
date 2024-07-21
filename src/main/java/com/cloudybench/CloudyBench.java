@@ -483,8 +483,9 @@ public class CloudyBench {
             double resource_cost=cpus_1 * rcu_c+cpus_1 * rcu_m * cpu_mem_ratio
                     +cpus_2 * rcu_c+cpus_2 * rcu_m * cpu_mem_ratio
                     +cpus_3 * rcu_c+cpus_3 * rcu_m * cpu_mem_ratio;
+            resource_cost = resource_cost / total_test_time;
             System.out.println("-----------T-Score--------------------");
-            System.out.printf("The total resource cost is   : %10.2f \n", resource_cost);
+            System.out.printf("The average resource cost is   : %10.2f \n", resource_cost);
             double T_Score = geomean_tps/resource_cost* 1.0;
             res.setT_Score(T_Score);
             System.out.printf("The T-Score is   : %10.10f \n", T_Score);
@@ -609,7 +610,7 @@ public class CloudyBench {
                     System.out.printf("The T-Score is   : %10.10f  \n", bench.res.getT_Score());
 
                     System.out.printf("The O-Score is   : %10.10f \n",
-                            Math.pow(bench.res.getP_SCORE() * bench.res.getE1_SCORE() * bench.res.getE2_SCORE()*bench.res.getT_Score(), 1/4.0)/( bench.res.getR_Score()+bench.res.getF_Score()+bench.res.getC_Score())
+                            Math.log10((bench.res.getP_SCORE() * bench.res.getE1_SCORE() * bench.res.getE2_SCORE()*bench.res.getT_Score())/( bench.res.getR_Score()*bench.res.getF_Score()*bench.res.getC_Score()))
                     );
                 }
 

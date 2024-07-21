@@ -10,7 +10,6 @@ classname_replica=com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 url=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
 url_replica=jdbc:sqlserver://localhost:1433;database=cloudybench_sf1x;user=@username;password=@passwd;
-authentication_key = @authentication_key
 
 RW_endpoint=@rw_endpoint
 RO_endpoint=@ro_endpoint
@@ -47,8 +46,10 @@ rcu_c=92.9
 rcu_m=5.4
 rcu_io=0.00287
 rcu_mbps=0.00868
-
 cpu_mem_ratio=4
+
+tps = 1000
+authentication_key = @authentication_key
 metric_url=@metric_url
 
 ## support cloud database benchmarking for multi-tenancy

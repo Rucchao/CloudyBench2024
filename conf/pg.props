@@ -46,8 +46,10 @@ rcu_c=92.9
 rcu_m=5.4
 rcu_io=0.00287
 rcu_mbps=0.00868
-
 cpu_mem_ratio=4
+
+tps = 1000
+authentication_key = @authentication_key
 metric_url=@metric_url
 
 ## support cloud database benchmarking for multi-tenancy

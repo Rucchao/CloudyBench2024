@@ -1,3 +1,2 @@
 export PATH=$JAVA_HOME/bin:$PATH
-
 java -cp $PWD/lib/*:. com.cloudybench.CloudyBench $*

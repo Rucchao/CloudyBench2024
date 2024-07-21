@@ -312,7 +312,7 @@ public abstract class Client {
                                         NeonAPI neon = new NeonAPI();
                                         String key = config.prop.getProperty("authentication_key");
                                         neon.Endpoint(endpoint,2, key);
-                                        threshold=interval;
+                                        threshold= Integer.parseInt(config.prop.getProperty("tps"));
                                     }
                                     System.out.println("This is a RW failure point !!");
                                 }
@@ -327,7 +327,7 @@ public abstract class Client {
                                         NeonAPI neon = new NeonAPI();
                                         String key = config.prop.getProperty("authentication_key");
                                         neon.Endpoint(endpoint,2, key);
-                                        threshold=interval;
+                                        threshold= Integer.parseInt(config.prop.getProperty("tps"));
                                     }
                                     System.out.println("This is a RO failure point !!");
                                 }
