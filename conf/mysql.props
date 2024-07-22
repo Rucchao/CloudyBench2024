@@ -31,8 +31,9 @@ fresh_rate=0.5
 
 cpu_num=4
 mem_num=40
-IOPS=84000
-Network=10000
+IOPS=840
+Network=10
+store=2
 node_num=1
 testTime=1
 
@@ -43,8 +44,9 @@ second_con=5
 third_con=1
 rcu_c=92.9
 rcu_m=5.4
-rcu_io=0.00287
-rcu_mbps=0.00868
+rcu_io=0.00015
+rcu_gbps=38.86
+rcu_s=0.25
 cpu_mem_ratio=4
 
 tps = 1000
