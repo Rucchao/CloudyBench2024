@@ -352,6 +352,9 @@ public abstract class Client {
                             if(verbose){
                                 if(clientName.equalsIgnoreCase("CloudLagTime") || clientName.equalsIgnoreCase("CloudReplica") ) {
                                     for(int tpidx = 0;tpidx < 4;tpidx++) {
+                                        if(clientName.equalsIgnoreCase("CloudLagTime") && tpidx == 2 ){
+                                            continue;
+                                        }
                                         if(hist.getTPItem(tpidx).getN() == 0)
                                             continue;
                                         logger.info("Transaction " + (tpidx+1)
