@@ -12,7 +12,7 @@ psql -h localhost -U @username -d cloudybench_sf1x -f conf/load_cloudybench_pg.s
 bash cloudybench -t sql -c conf/pg.props -f conf/create_sequence_cloudybench_pg.sql
 ```
 
-## Cloud-Native Database Deployment (Take Neon as an example)
+## Cloud-Native Database Deployment (Take Neon as an example: cdb= = neon)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
