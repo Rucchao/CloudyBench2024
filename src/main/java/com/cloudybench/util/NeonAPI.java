@@ -44,7 +44,7 @@ public class NeonAPI {
     String dateformat(Date date)
     {
         // UTC time
-        Date minus_hour = DateUtility.MinusHours(date,8);
+        Date minus_hour = DateUtility.MinusHours(date,0);
 
         String dateString=DateUtility.convertDateToString(minus_hour);
 
@@ -53,13 +53,15 @@ public class NeonAPI {
         return dateFormat;
     }
 
-    public String metricJson(String start) throws ParseException {
+    public String metricJson(String start, int range) throws ParseException {
 
         Date from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(start);
+        System.out.println(start);
+        System.out.println(from);
 
         // compute a datatime after 10 mins
         // 10-minute range
-        Date to = DateUtility.AddMinutes(from,10);
+        Date to = DateUtility.AddMinutes(from,range);
 
         String from_str=dateformat(from);
 

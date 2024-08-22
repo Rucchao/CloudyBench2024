@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -290,10 +292,12 @@ public class CloudyBench {
         // the concurrency in the third minute
         Con[2][0]=third_con;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String StartTime = dateFormat.format(System.currentTimeMillis());
+        Instant instant = Instant.now();
+        System.out.println(instant);
+        String[] str = Instant.now().toString().split("T");
+        String startTime = str[0] + " " + str[1].substring(0, 8);
 
-        logger.info("Elastic test starts at " + StartTime);
+        logger.info("Elastic test starts at " + startTime);
         double total_tps=0;
 
         for (int i = 1; i <= total_test_time; i++) {
@@ -317,15 +321,15 @@ public class CloudyBench {
         if(cdb.equals("neon")){
             // caculate the resources
             NeonAPI neon = new NeonAPI();
-            String json=neon.metricJson(StartTime);
+            String json=neon.metricJson(startTime, 10);
             String url = config.prop.getProperty("metric_url","404");
             String key = config.prop.getProperty("authentication_key");
             double cpus = neon.doPostRequest(url,json, key);
-            double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
-            double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
-            double rcu_io = Double.parseDouble(config.prop.getProperty("rcu_io","0"));
+            double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"))/60;
+            double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"))/60;
+            double rcu_io = Double.parseDouble(config.prop.getProperty("rcu_io","0"))/60;
             int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
-            int IOPS = Integer.parseInt(ConfigLoader.prop.getProperty("IOPS","1"));
+            int IOPS = Integer.parseInt(ConfigLoader.prop.getProperty("IOPS","1"))/60;
             double resource_cost=cpus * rcu_c+cpus * rcu_m * cpu_mem_ratio + rcu_io * IOPS;
             System.out.println("-----------E1-Score--------------------");
             double E1_Score= (avg_tps/resource_cost)  * 1.0;
@@ -430,10 +434,12 @@ public class CloudyBench {
         Con[2][1]=third_con_2;
         Con[2][2]=third_con_3;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String StartTime = dateFormat.format(System.currentTimeMillis());
+        Instant instant = Instant.now();
+        System.out.println(instant);
+        String[] str = Instant.now().toString().split("T");
+        String startTime = str[0] + " " + str[1].substring(0, 8);
 
-        logger.info("Multi-tenancy test starts at " + StartTime);
+        logger.info("Multi-tenancy test starts at " + startTime);
         double total_tenant1_tps=0;
         double total_tenant2_tps=0;
         double total_tenant3_tps=0;
@@ -464,10 +470,18 @@ public class CloudyBench {
         if(cdb.equals("neon")){
             // caculate the total resource cost
             NeonAPI neon = new NeonAPI();
-            String json=neon.metricJson(StartTime);
-            double rcu_c = Double.parseDouble(config.prop.getProperty("rcu_c","0"));
-            double rcu_m = Double.parseDouble(config.prop.getProperty("rcu_m","0"));
-            int cpu_mem_ratio=Integer.parseInt(config.prop.getProperty("cpu_mem_ratio","1"));
+            String json=neon.metricJson(startTime, 3);
+            Double rcu_c = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_c","1")) / 60;
+            Double rcu_m = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_m","1")) / 60;
+            Double rcu_io = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_io","1")) / 60;
+            Double rcu_mbps = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_gbps","1")) / 60;
+            Double rcu_s = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_s","1")) / 60;
+            int cpu_num = Integer.parseInt(ConfigLoader.prop.getProperty("cpu_num","1"));
+            int mem_num = Integer.parseInt(ConfigLoader.prop.getProperty("mem_num","1"));
+            int IOPS = Integer.parseInt(ConfigLoader.prop.getProperty("IOPS","1"));
+            int Network = Integer.parseInt(ConfigLoader.prop.getProperty("Network","1"));
+            int node_num = Integer.parseInt(ConfigLoader.prop.getProperty("node_num","1"));
+            int store = Integer.parseInt(ConfigLoader.prop.getProperty("store","1"));
             String key = config.prop.getProperty("authentication_key");
 
             // tenant 1
@@ -482,9 +496,7 @@ public class CloudyBench {
             String url_3 = config.prop.getProperty("metric_url_3","404");
             double cpus_3 = neon.doPostRequest(url_3,json, key);
 
-            double resource_cost=cpus_1 * rcu_c+cpus_1 * rcu_m * cpu_mem_ratio
-                    +cpus_2 * rcu_c+cpus_2 * rcu_m * cpu_mem_ratio
-                    +cpus_3 * rcu_c+cpus_3 * rcu_m * cpu_mem_ratio;
+            double resource_cost=(rcu_c*cpu_num+rcu_m*mem_num+rcu_io*IOPS+rcu_mbps*Network+rcu_s*store)*node_num*3;
             resource_cost = resource_cost / total_test_time;
             System.out.println("-----------T-Score--------------------");
             System.out.printf("The average resource cost is   : %10.2f \n", resource_cost);

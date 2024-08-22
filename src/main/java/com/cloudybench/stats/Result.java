@@ -284,15 +284,17 @@ public class Result {
         logger.info("====================Test Summary========================");
         logger.info("Test starts at " + getStartTS());
         logger.info("Test ends at " + getEndTs());
-        Double rcu_c = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_c","1"));
-        Double rcu_m = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_m","1"));
-        Double rcu_io = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_io","1"));
-        Double rcu_mbps = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_mbps","1"));
+        Double rcu_c = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_c","1")) / 60;
+        Double rcu_m = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_m","1")) / 60;
+        Double rcu_io = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_io","1")) / 60;
+        Double rcu_mbps = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_gbps","1")) / 60;
+        Double rcu_s = Double.parseDouble(ConfigLoader.prop.getProperty("rcu_s","1")) / 60;
         int cpu_num = Integer.parseInt(ConfigLoader.prop.getProperty("cpu_num","1"));
         int mem_num = Integer.parseInt(ConfigLoader.prop.getProperty("mem_num","1"));
         int IOPS = Integer.parseInt(ConfigLoader.prop.getProperty("IOPS","1"));
         int Network = Integer.parseInt(ConfigLoader.prop.getProperty("Network","1"));
         int node_num = Integer.parseInt(ConfigLoader.prop.getProperty("node_num","1"));
+        int store = Integer.parseInt(ConfigLoader.prop.getProperty("store","1"));
 
         switch(type){
             case 1:
@@ -345,7 +347,7 @@ public class Result {
                         hist.getTPItem(tpidx).getPercentile(99));
             }
             System.out.println("-----------P-Score--------------------");
-            double P_Score = (getTps() / (rcu_c*cpu_num+rcu_m*mem_num+rcu_io*IOPS+rcu_mbps*Network)*node_num)  * 1.0;
+            double P_Score = (getTps() / (rcu_c*cpu_num+rcu_m*mem_num+rcu_io*IOPS+rcu_mbps*Network+rcu_s*store)*node_num)  * 1.0;
             setP_SCORE(P_Score);
             System.out.printf("P-Score : %10.5f \n", P_Score);
         }

@@ -18,6 +18,8 @@ bash cloudybench -t sql -c conf/pg.props -f conf/create_sequence_cloudybench_pg.
 ![alt text](image-3.png)
 ![alt text](image-4.png)
 ```
+cdb=neon
+
 RW_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@rw_endpoint
 
 RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@ro_endpoint

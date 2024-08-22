@@ -240,27 +240,6 @@ public class RandomGenerator {
         return new Date(randomMillisSinceEpoch);
     }
 
-    public int getPowerIndex(int size, PowerCDF power) {
-        int idx= binary_search(rand, power, size);
-        return idx;
-    }
-
-    public static int binary_search(Random rand, PowerCDF power, int size){
-        double randomDis = rand.nextDouble();
-        int lowerBound = 0;
-        int upperBound = size;
-        int midPoint = (upperBound + lowerBound) / 2;
-
-        while (upperBound > (lowerBound + 1)) {
-            if (power.getPowerDist().cdf(midPoint) > randomDis) {
-                upperBound = midPoint;
-            } else {
-                lowerBound = midPoint;
-            }
-            midPoint = (upperBound + lowerBound) / 2;
-        }
-        return midPoint;
-    }
 
 //    public Date getRandomTimestamp(Date min_date) {
 //        long now = new Date().getTime();
