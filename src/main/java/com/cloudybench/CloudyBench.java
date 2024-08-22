@@ -23,6 +23,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.io.BufferedReader;
+import java.io.*;
 
 public class CloudyBench {
     public static Logger logger = LogManager.getLogger(CloudyBench.class);
@@ -504,6 +506,117 @@ public class CloudyBench {
         }
     }
 
+    // MySQL consistency test
+    public void runSccTest(ConfigLoader config) throws IOException {
+        // read neccessary config from file
+        String dbType = config.prop.getProperty("db");
+        String jdbcUrl = config.prop.getProperty("url");
+        String hostname = getHostnameFromJdbcUrl(jdbcUrl);
+        String port = getPortFromJdbcUrl(jdbcUrl);
+        String username = config.prop.getProperty("username");
+        String password = config.prop.getProperty("password");
+        String database = getDatabaseFromJdbcUrl(jdbcUrl);
+
+
+        // dbsct run command
+        String command = String.format(
+            "./lib/dbsct --host-rw=%s --host-ro=%s --port-rw=%s --port-ro=%s --user=%s --password=%s --iterations=1000000 --table-cnt=100 --table-size=1000 --concurrency=100 --database=%s --sc-gap-us=0 --report-interval=5 --detail-log=%s --type=%s",
+            hostname, hostname, port, port, username, password, database, "0", dbType
+        );
+
+        System.out.println("====================SCC script Info====================");
+        logger.info("Executing command: " + command);
+
+        System.out.println("====================Start running the SCC script====================");
+
+        Process process = Runtime.getRuntime().exec(command);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        int sumStrictConsistency = 0;
+        int sumFailed = 0;
+
+        while ((line = reader.readLine()) != null) {
+            logger.info(line);  // log output
+            if (line.contains("Strict consistency tps:")) {
+                String[] parts = line.split(",");
+                int strictTps = Integer.parseInt(parts[0].split(":")[1].trim());
+                int failedTps = Integer.parseInt(parts[1].split(":")[1].trim());
+
+                sumStrictConsistency += strictTps;  // calc strict consist number
+                sumFailed += failedTps;  // calc failure number
+            }
+        }
+        reader.close();
+
+        System.out.println("====================SCC script finished running====================");
+
+        // calc result
+        double consistentScore = 1 - (double) sumFailed / (double) sumStrictConsistency;
+        System.out.printf("Consistent Score: %.2f%%%n", consistentScore * 100);
+    }
+
+    // PGSQL consistency test
+    public void runPGSccTest(ConfigLoader config) throws IOException {
+        String dbType = config.prop.getProperty("db");
+        String jdbcUrl = config.prop.getProperty("url");
+        String hostname = getHostnameFromJdbcUrl(jdbcUrl);
+        String port = getPortFromJdbcUrl(jdbcUrl);
+        String username = config.prop.getProperty("username");
+        String password = config.prop.getProperty("password");
+        String database = getDatabaseFromJdbcUrl(jdbcUrl);
+
+        String command = String.format(
+            "./lib/dbsct --host-rw=%s --host-ro=%s --port-rw=%s --port-ro=%s --user=%s --password=%s --iterations=1000000 --table-cnt=100 --table-size=1000 --concurrency=100 --database=%s --sc-gap-us=0 --report-interval=5 --detail-log=%s --type=pgsql",
+            hostname, hostname, port, port, username, password, database, "0", dbType
+        );
+
+        System.out.println("====================SCC script Info====================");
+        logger.info("Executing command: " + command);
+
+        System.out.println("====================Start running the SCC script====================");
+
+        Process process = Runtime.getRuntime().exec(command);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        int sumStrictConsistency = 0;
+        int sumFailed = 0;
+
+        while ((line = reader.readLine()) != null) {
+            logger.info(line);  // 将脚本输出记录到日志
+            if (line.contains("Strict consistency tps:")) {
+                String[] parts = line.split(",");
+                int strictTps = Integer.parseInt(parts[0].split(":")[1].trim());
+                int failedTps = Integer.parseInt(parts[1].split(":")[1].trim());
+
+                sumStrictConsistency += strictTps;
+                sumFailed += failedTps;
+            }
+        }
+        reader.close();
+
+        System.out.println("====================SCC script finished running====================");
+
+        double consistentScore = 1 - (double) sumFailed / (double) sumStrictConsistency;
+        System.out.printf("Consistent Score: %.2f%%%n", consistentScore * 100);
+    }
+
+    // parse JdbcURL field to get hostname
+    public String getHostnameFromJdbcUrl(String jdbcUrl) {
+        return jdbcUrl.split("//")[1].split("/")[0].split(":")[0];
+    }
+
+    // parse JdbcURL field to get port
+    public String getPortFromJdbcUrl(String jdbcUrl) {
+        return jdbcUrl.split("//")[1].split("/")[0].split(":")[1];
+    }
+
+    // parse JdbcURL field to get schema name
+    public String getDatabaseFromJdbcUrl(String jdbcUrl) {
+        return jdbcUrl.split("//")[1].split("/")[1].split("\\?")[0];
+    }
+
     public static void main(String[] args) throws SQLException, ParseException, IOException {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         File file = new File("conf/log4j2.properties");
@@ -588,6 +701,14 @@ public class CloudyBench {
 
                 else if(cmd.equalsIgnoreCase("runFailOver")) {
                     bench.runFailover();
+                }
+
+                else if(cmd.equalsIgnoreCase("runSccTest")) {
+                    bench.runSccTest(config);
+                }
+
+                else if(cmd.equalsIgnoreCase("runPGSccTest")) {
+                    bench.runPGSccTest(config);
                 }
 
                 else if(cmd.equalsIgnoreCase("runAll")){
