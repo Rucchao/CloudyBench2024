@@ -42,6 +42,12 @@ metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@en
 ### choose different configuration
 ![alt text](image-9.png)
 
+## Cloud-Native Database Deployment - HyperScale
+### create a CDB instance on https://portal.azure.com/#home
+![alt text](image-10.png)
+![alt text](image-11.png)
+### choose different configuration
+![alt text](image-12.png)
 
 ## Supporting P-Score calculation as follows (Take Neon as an example):
 
