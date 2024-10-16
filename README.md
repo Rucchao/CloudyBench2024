@@ -12,21 +12,6 @@ psql -h localhost -U @username -d cloudybench_sf1x -f conf/load_cloudybench_pg.s
 bash cloudybench -t sql -c conf/pg.props -f conf/create_sequence_cloudybench_pg.sql
 ```
 
-## Cloud-Native Database Deployment - Neon
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
-![alt text](image-4.png)
-```
-cdb=neon
-
-RW_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@rw_endpoint
-
-RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@ro_endpoint
-
-metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@endpoint/stats
-```
-
 ## Supporting P-Score calculation as follows (Take Neon as an example):
 
 ```
@@ -68,3 +53,20 @@ bash cloudybench -t runTenancy -c conf/pg.props -f conf/stmt_postgres.toml -m 3
 ```
 bash cloudybench -t runAll -c conf/pg.props -f conf/stmt_postgres.toml
 ```
+
+## Cloud-Native Database Deployment - Neon
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
+```
+cdb=neon
+
+RW_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@rw_endpoint
+
+RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@ro_endpoint
+
+metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@endpoint/stats
+```
+
+
