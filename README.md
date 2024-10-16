@@ -27,28 +27,6 @@ RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@r
 metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@endpoint/stats
 ```
 
-## Cloud-Native Database Deployment - PolarDB
-### create a CDB instance on https://polardb.console.aliyun.com
-![alt text](image.png)
-![alt text](image-5.png)
-### choose different configuration
-![alt text](image-6.png)
-
-## Cloud-Native Database Deployment - AWS RDS & Aurora
-### create a CDB instance on https://console.aws.amazon.com/console/home
-![alt text](image-7.png)
-### choose different engine
-![alt text](image-8.png)
-### choose different configuration
-![alt text](image-9.png)
-
-## Cloud-Native Database Deployment - HyperScale
-### create a CDB instance on https://portal.azure.com/#home
-![alt text](image-10.png)
-![alt text](image-11.png)
-### choose different configuration
-![alt text](image-12.png)
-
 ## Supporting P-Score calculation as follows (Take Neon as an example):
 
 ```
