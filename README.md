@@ -69,4 +69,20 @@ RO_endpoint = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@r
 metric_url = https://console.neon.tech/api/v2/projects/@project_id/endpoints/@endpoint/stats
 ```
 
+## Benchmarking Notes
+(1) Error: Could not find or load main class
+```
+Solution: modify the path to lib directory 
+```
+
+(2) mvn clean package...Failed to execute goal on project CloudyBench:CloudyBench:jar:1.0-SNAPSHOT
+```
+Solution: when the Maven version is greater than 3.8, you need to remove the tags of blocked mirrors of $Maven_home/conf/settings.xml. 
+```
+
+(3) With the OS in Windows, you may use the Java command to run CloudyBench: 
+```
+Solution: java -cp "CloudyBench-1.0-SNAPSHOT.jar;lib/*" com.CloudyBench.CloudyBench [-t][-c][-f]
+```
+
 
