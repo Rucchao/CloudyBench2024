@@ -1,5 +1,8 @@
 # CloudyBench - A Benchmark for Cloud-Native Databases
 
+## Performance Metric
+
+![alt text](metric.jpg)
 
 ## Data Generation, Data Loading and Indexing
 ```
@@ -55,10 +58,10 @@ bash cloudybench -t runAll -c conf/pg.props -f conf/stmt_postgres.toml
 ```
 
 ## Cloud-Native Database Deployment - Neon
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
-![alt text](image-4.png)
+![alt text](deploy-1.png)
+![alt text](deploy-2.png)
+![alt text](deploy-3.png)
+![alt text](deploy-4.png)
 ```
 cdb=neon
 
