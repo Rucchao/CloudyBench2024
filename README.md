@@ -1,6 +1,10 @@
 # CloudyBench - A Benchmark for Cloud-Native Databases
 
-## Performance Metric
+## CloudyBench Overview
+
+![alt text](overview.png)
+
+## Performance Metrics
 
 ![alt text](metric.jpg)
 
