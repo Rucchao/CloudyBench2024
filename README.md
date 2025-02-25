@@ -12,7 +12,9 @@ The above figure depicts an overview of CloudyBench, including the data generati
 ![alt text](metric.jpg)
 
 ## Generate the Jar with maven
+```
 mvn clean package
+```
 
 ## Data Generation, Data Loading and Indexing
 ```
