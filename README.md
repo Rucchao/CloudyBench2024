@@ -11,6 +11,9 @@ The above figure depicts an overview of CloudyBench, including the data generati
 
 ![alt text](metric.jpg)
 
+## Generate the Jar with maven
+mvn clean package
+
 ## Data Generation, Data Loading and Indexing
 ```
 bash cloudybench -t sql -c conf/pg.props -f conf/ddl_cloudybench_pg.sql
