@@ -97,7 +97,7 @@ Solution: when the Maven version is greater than 3.8, you need to remove the tag
 
 (3) With the OS in Windows, you may use the Java command to run CloudyBench: 
 ```
-Solution: java -cp "CloudyBench-1.0-SNAPSHOT.jar;lib/*" com.CloudyBench.CloudyBench [-t][-c][-f]
+Solution: java -cp "CloudyBench-1.0-SNAPSHOT.jar;lib/*" com.cloudybench.CloudyBench [-t][-c][-f]
 ```
 
 
